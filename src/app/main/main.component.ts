@@ -1,5 +1,5 @@
-import {Component, inject, OnInit} from '@angular/core';
-import {NgForOf, NgIf, NgOptimizedImage} from '@angular/common';
+import {Component, OnInit} from '@angular/core';
+import {NgForOf, NgIf} from '@angular/common';
 import {Tour} from '../tour'
 import {MatCard, MatCardContent, MatCardHeader, MatCardSmImage, MatCardTitle} from '@angular/material/card';
 import {MatDivider} from '@angular/material/divider';
@@ -7,6 +7,8 @@ import {MatFormField, MatInputModule, MatLabel} from '@angular/material/input';
 import {FormsModule} from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {HttpClient} from '@angular/common/http';
+import {DomSanitizer} from '@angular/platform-browser';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-main',
@@ -45,11 +47,11 @@ export class MainComponent implements OnInit{
   }];
   tile: {x: number, y: number} = {x: 0, y: 0};
   hoveredTour: any = null;
-  img: string = "";
-  //client: HttpClient = inject(HttpClient);
+  updateTour: any = null;
+  img: any;
   restService = "http://localhost:8080/tour"
 
-  constructor() {
+  constructor(private client: HttpClient, private sanitizer: DomSanitizer) {
   }
 
   ngOnInit() {
@@ -60,11 +62,18 @@ export class MainComponent implements OnInit{
     this.tile = this.latLngToCoords(18, 48.23486104355502,16.371135620688413)
 
     /*this.getImage().subscribe(result => {
-      this.img = result;
-    })*/
+        let objectURL = URL.createObjectURL(result);
+        this.img = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+    });*/
+
+    this.getTile(this.tile, 18).then((img: Observable<Blob>) => {
+      img.subscribe(result => {
+        let objectURL = URL.createObjectURL(result);
+        this.img = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+      })
+    })
 
   }
-
 
 
   async getAllTours(): Promise<Tour[]> {
@@ -78,18 +87,16 @@ export class MainComponent implements OnInit{
     return {x: x_coord, y: y_coord};
   }
 
-  /*getImage() {
+  getImage() {
     const url = "https://yt3.googleusercontent.com/PKRBxhCiGa8Y0vPmHa1E2cdjpLhUq2Pl-gESwP7kk2plGgxLdsbjyTd9VjcJwBMiY0HQ8bvx5Q=s900-c-k-c0x00ffffff-no-rj";
-    return this.client.get(url, {responseType: 'blob'});
-  }*/
+    return this.client.get(url, { responseType: 'blob' });
+  }
 
-  async getTile(tile: {x: number, y: number}, zoom: number){
+  async getTile(tile: {x: number, y: number}, zoom: number): Promise<Observable<Blob>>{
     let url = "https://tile.openstreetmap.org/{zoom}/{x}/{y}.png";
-    //url.replace("{zoom}", zoom.toString()).replace("{x}", tile.x.toString()).replace("{y}", tile.y.toString());
+    url.replace("{zoom}", zoom.toString()).replace("{x}", tile.x.toString()).replace("{y}", tile.y.toString());
     //console.log(url);
-    //const client: HttpClient = inject(HttpClient);
-    //const image = client.get(url, { headers: {"User-Agent": "Angular App (if23b126@technikum-wien)"}});
     //const image = fetch(url);
-    //return await image;
+    return this.client.get(url, {headers: {"User-Agent": "Vivaldi (if23b126@technikum-wien)"}, responseType: 'blob'});
   }
 }

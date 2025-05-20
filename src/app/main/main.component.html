@@ -1,4 +1,4 @@
-<dialog #myDialog>
+<dialog #addRouteDialog>
   <form class="add-route-form">
     <div>
       <h1>Add a new route</h1>
@@ -48,8 +48,61 @@
       </mat-form-field>
     </div>
     <div>
-      <button (click)="myDialog.close()">Save</button>
-      <button (click)="myDialog.close()">Cancel</button>
+      <button (click)="addRouteDialog.close()">Save</button>
+      <button (click)="addRouteDialog.close()">Cancel</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog #updateRouteDialog>
+  <form class="update-route-form" *ngIf="updateTour">
+    <div>
+    <mat-form-field class="example-full-width">
+      <mat-label>Route Name</mat-label>
+      <input matInput placeholder={{updateTour.name}}>
+    </mat-form-field>
+    <mat-form-field class="example-full-width">
+      <mat-label>Description</mat-label>
+      <input matInput placeholder={{updateTour.description}}>
+    </mat-form-field>
+    <table class="example-full-width" cellspacing="0"><tr>
+      <td><mat-form-field class="example-full-width">
+        <mat-label>Start</mat-label>
+        <input matInput placeholder={{updateTour.start}}>
+      </mat-form-field></td>
+      <td><mat-form-field class="example-full-width">
+        <mat-label>End</mat-label>
+        <input matInput placeholder={{updateTour.end}}>
+      </mat-form-field></td>
+    </tr></table>
+    <mat-form-field class="example-full-width">
+      <mat-label>transportMode</mat-label>
+      <input matInput placeholder={{updateTour.transportMode}}>
+    </mat-form-field>
+    <mat-form-field class="example-full-width">
+      <mat-label>distance</mat-label>
+      <input matInput placeholder={{updateTour.distance}}>
+    </mat-form-field>
+    <table class="example-full-width" cellspacing="0"><tr>
+      <td><mat-form-field class="example-full-width">
+        <mat-label>timeStart</mat-label>
+        <input matInput placeholder={{updateTour.timeStart}}>
+      </mat-form-field></td>
+      <td><mat-form-field class="example-full-width">
+        <mat-label>timeEnd</mat-label>
+        <input matInput placeholder={{updateTour.timeEnd}}>
+      </mat-form-field></td>
+    </tr></table>
+    <mat-form-field class="example-full-width">
+      <mat-label>information</mat-label>
+      <input matInput placeholder={{updateTour.information}}>
+    </mat-form-field>
+    <mat-form-field class="example-full-width">
+      <mat-label>timeCreated</mat-label>
+      <input matInput placeholder= {{updateTour.timeCreated}}>
+    </mat-form-field>
+      <button (click)="updateRouteDialog.close()">Save</button>
+      <button (click)="updateRouteDialog.close()">Cancel</button>
     </div>
   </form>
 </dialog>
@@ -58,13 +111,13 @@
 <mat-card class="tour" appearance="outlined">
   <mat-card-header>
     <mat-card-title>
-        <button mat-icon-button (click)="myDialog.show()">Add route</button>
+        <button mat-icon-button (click)="addRouteDialog.show()" >Add route</button>
     </mat-card-title>
   </mat-card-header>
   <br>
   <mat-divider></mat-divider>
 
-  <mat-card-content>
+  <mat-card-content >
     <ul class="tour" style="list-style: none;">
       <li *ngFor="let tour of tours" >
         <button (mouseenter)="hoveredTour = tour" (mouseleave)="hoveredTour = null" class="tour-button">
@@ -74,7 +127,7 @@
           <br>
           <span class="name">{{tour.timeCreated}}</span>
         </button>
-        <button>Edit route</button>
+        <button mat-icon-button (click)="updateTour = tour; updateRouteDialog.show()">Edit route</button>
         <br>
         <br>
       </li>
@@ -91,7 +144,7 @@
         <div><mat-label>Description: {{hoveredTour.description}}</mat-label></div>
         <div><mat-label>Start: {{hoveredTour.start}}</mat-label></div>
         <div><mat-label>End: {{hoveredTour.end}}</mat-label></div>
-       <div><mat-label>Transport Mode: {{hoveredTour.transportMode}}</mat-label></div>
+        <div><mat-label>Transport Mode: {{hoveredTour.transportMode}}</mat-label></div>
         <div><mat-label>Distance: {{hoveredTour.distance}}</mat-label></div>
         <div><mat-label>Time Started: {{hoveredTour.timeStart}}</mat-label></div>
         <div><mat-label>Time End: {{hoveredTour.timeEnd}}</mat-label></div>
@@ -103,5 +156,5 @@
 
 
 
-<img mat-card-sm-image src="{{img}}"  alt="GitHub"/>
+<img mat-card-sm-image [src]="img" alt="GitHub"/>
 
