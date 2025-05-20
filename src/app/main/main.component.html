@@ -1,9 +1,96 @@
-<h2>My Heroes</h2>
-<ul class="heroes">
-    <li>
-        <button type="button">
-            <span class="badge">{{hero.id}}</span>
-            <span class="name">{{hero.name}}</span>
+<div class="container-fluid">
+<mat-card class="tour" appearance="outlined">
+  <mat-card-header>
+    <mat-card-title>
+        <button mat-icon-button (click)="myDialog.show()">Add route</button>
+    </mat-card-title>
+  </mat-card-header>
+  <br>
+  <mat-divider></mat-divider>
+
+  <mat-card-content>
+    <ul class="tour" style="list-style: none;">
+      <li *ngFor="let tour of tours" >
+        <button class="hoverable-button">
+          <span class="badge">{{tour.name}}</span>
+          <br>
+          <span class="name">{{tour.timeCreated}}</span>
         </button>
-    </li>
-</ul>
+      </li>
+    </ul>
+  </mat-card-content>
+</mat-card>
+</div>
+
+
+<button class="hoverable-button">Hover Me!</button>
+<p class="display-on-hover">Hello! This is displayed on hover.</p>
+
+<div>
+  <mat-card class="info-route-form" appearance="outlined">
+    <mat-card-content>
+
+
+    </mat-card-content>
+  </mat-card>
+</div>
+
+
+
+
+
+<dialog #myDialog>
+  <form class="add-route-form">
+    <div>
+      <h1>Add a new route</h1>
+      <mat-form-field class="example-full-width">
+        <mat-label>Route Name</mat-label>
+        <input matInput placeholder="Name">
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <mat-label>Description</mat-label>
+        <input matInput placeholder="Description">
+      </mat-form-field>
+      <table class="example-full-width" cellspacing="0"><tr>
+        <td><mat-form-field class="example-full-width">
+          <mat-label>Start</mat-label>
+          <input matInput placeholder="Start">
+        </mat-form-field></td>
+        <td><mat-form-field class="example-full-width">
+          <mat-label>End</mat-label>
+          <input matInput placeholder="End">
+        </mat-form-field></td>
+      </tr></table>
+      <mat-form-field class="example-full-width">
+        <mat-label>transportMode</mat-label>
+        <input matInput placeholder="transportMode">
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <mat-label>distance</mat-label>
+        <input matInput placeholder="distance">
+      </mat-form-field>
+      <table class="example-full-width" cellspacing="0"><tr>
+        <td><mat-form-field class="example-full-width">
+          <mat-label>timeStart</mat-label>
+          <input matInput placeholder="timeStart">
+        </mat-form-field></td>
+        <td><mat-form-field class="example-full-width">
+          <mat-label>timeEnd</mat-label>
+          <input matInput placeholder="timeEnd">
+        </mat-form-field></td>
+      </tr></table>
+      <mat-form-field class="example-full-width">
+        <mat-label>information</mat-label>
+        <input matInput placeholder="information">
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <mat-label>timeCreated</mat-label>
+        <input matInput placeholder="timeCreated">
+      </mat-form-field>
+    </div>
+    <div>
+      <button (click)="myDialog.close()">Save</button>
+      <button (click)="myDialog.close()">Cancel</button>
+    </div>
+  </form>
+</dialog>
