@@ -1,44 +1,3 @@
-<div class="container-fluid">
-<mat-card class="tour" appearance="outlined">
-  <mat-card-header>
-    <mat-card-title>
-        <button mat-icon-button (click)="myDialog.show()">Add route</button>
-    </mat-card-title>
-  </mat-card-header>
-  <br>
-  <mat-divider></mat-divider>
-
-  <mat-card-content>
-    <ul class="tour" style="list-style: none;">
-      <li *ngFor="let tour of tours" >
-        <button class="hoverable-button">
-          <span class="badge">{{tour.name}}</span>
-          <br>
-          <span class="name">{{tour.timeCreated}}</span>
-        </button>
-      </li>
-    </ul>
-  </mat-card-content>
-</mat-card>
-</div>
-
-
-<button class="hoverable-button">Hover Me!</button>
-<p class="display-on-hover">Hello! This is displayed on hover.</p>
-
-<div>
-  <mat-card class="info-route-form" appearance="outlined">
-    <mat-card-content>
-
-
-    </mat-card-content>
-  </mat-card>
-</div>
-
-
-
-
-
 <dialog #myDialog>
   <form class="add-route-form">
     <div>
@@ -94,3 +53,55 @@
     </div>
   </form>
 </dialog>
+
+<div class="container-fluid">
+<mat-card class="tour" appearance="outlined">
+  <mat-card-header>
+    <mat-card-title>
+        <button mat-icon-button (click)="myDialog.show()">Add route</button>
+    </mat-card-title>
+  </mat-card-header>
+  <br>
+  <mat-divider></mat-divider>
+
+  <mat-card-content>
+    <ul class="tour" style="list-style: none;">
+      <li *ngFor="let tour of tours" >
+        <button (mouseenter)="hoveredTour = tour" (mouseleave)="hoveredTour = null" class="tour-button">
+          <span class="badge">{{tour.name}}</span>
+          <br>
+          <span class="badge">{{tour.start}} - {{tour.end}}</span>
+          <br>
+          <span class="name">{{tour.timeCreated}}</span>
+        </button>
+        <button>Edit route</button>
+        <br>
+        <br>
+      </li>
+    </ul>
+  </mat-card-content>
+</mat-card>
+</div>
+
+  <mat-card class="info-route-form" *ngIf="hoveredTour" appearance="outlined" >
+    <mat-card-content >
+      <div class="tour-grid">
+        <div><mat-label>Route Name: {{hoveredTour.name}}</mat-label></div>
+        <br>
+        <div><mat-label>Description: {{hoveredTour.description}}</mat-label></div>
+        <div><mat-label>Start: {{hoveredTour.start}}</mat-label></div>
+        <div><mat-label>End: {{hoveredTour.end}}</mat-label></div>
+       <div><mat-label>Transport Mode: {{hoveredTour.transportMode}}</mat-label></div>
+        <div><mat-label>Distance: {{hoveredTour.distance}}</mat-label></div>
+        <div><mat-label>Time Started: {{hoveredTour.timeStart}}</mat-label></div>
+        <div><mat-label>Time End: {{hoveredTour.timeEnd}}</mat-label></div>
+        <div><mat-label>Time Created: {{hoveredTour.timeCreated}}</mat-label></div>
+        <div><mat-label>Information: {{hoveredTour.information}}</mat-label></div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+
+
+<img mat-card-sm-image src="{{img}}"  alt="GitHub"/>
+
