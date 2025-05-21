@@ -1,11 +1,14 @@
 .tour{
-  max-width: 300px;
+  width: 95%;
+  height: 100%;
+}
+
+.background-color {
   background-color: aliceblue;
 }
 
 .example-button-row {
   display: table-cell;
-  max-width: 600px;
 }
 
 .example-full-width {
@@ -45,4 +48,41 @@
 }
 .display-on-hover {
   display: none;
+}
+
+.tile-image {
+  width: 100%;
+  height: auto;
+}
+
+mat-grid-list {
+  width: 70%;
+  padding-bottom: 0 !important;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.scrollable {
+  overflow-y: auto !important;
+}
+
+.fixed {
+  position: absolute;
+  top: 0;
+}
+
+.center-text {
+  text-align: center;
+}
+
+.center-content {
+  align-content: center;
+}
+
+.mat-card {
+  height: 95%;
+}
+
+.dialog {
+  z-index: 999 !important;
 }

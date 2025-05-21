@@ -1,31 +1,36 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Injectable, OnInit} from '@angular/core';
 import {NgForOf, NgIf} from '@angular/common';
 import {Tour} from '../tour'
-import {MatCard, MatCardContent, MatCardHeader, MatCardSmImage, MatCardTitle} from '@angular/material/card';
-import {MatDivider} from '@angular/material/divider';
+import {MatCard, MatCardContent, MatCardSmImage} from '@angular/material/card';
 import {MatFormField, MatInputModule, MatLabel} from '@angular/material/input';
-import {FormsModule} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {HttpClient} from '@angular/common/http';
 import {DomSanitizer} from '@angular/platform-browser';
 import {Observable} from 'rxjs';
+import {parseJson} from '@angular/cli/src/utilities/json-file';
+import {MatButton} from '@angular/material/button';
+import {LayoutModule} from '@angular/cdk/layout';
+import {MatGridList, MatGridTile} from '@angular/material/grid-list';
 
 @Component({
   selector: 'app-main',
   imports: [
     NgIf,
     NgForOf,
-    MatCardHeader,
-    MatCardTitle,
     MatCardContent,
     MatCard,
-    MatDivider,
     MatLabel,
     MatFormField,
     FormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatCardSmImage
+    MatCardSmImage,
+    LayoutModule,
+    MatGridList,
+    MatGridTile,
+    MatButton,
+    ReactiveFormsModule
   ],
   templateUrl: './main.component.html',
   styleUrl: './main.component.css'
@@ -49,22 +54,28 @@ export class MainComponent implements OnInit{
   hoveredTour: any = null;
   updateTour: any = null;
   img: any;
-  restService = "http://localhost:8080/tour"
+  addRouteName: string = "";
+  addRouteDescription: string = "";
+  addRouteStartpoint: string = "";
+  addRouteEndpoint: string = "";
+  addRouteTransportMode: string = "";
+  addRouteDistance: number = 0;
+  addRouteTimeStart: string = "";
+  addRouteTimeEnd: string = "";
+  addRouteInformation: string = "";
+  restService = "http://localhost:8080/"
 
   constructor(private client: HttpClient, private sanitizer: DomSanitizer) {
   }
 
   ngOnInit() {
-    this.getAllTours().then((tourList: Tour[]) => {
-      this.tours = tourList;
-    });
+    this.getAllTours().then((tours: Observable<object>) => {
+      tours.subscribe(result => {
+        this.tours = parseJson(JSON.stringify(result));
+      })
+    })
 
     this.tile = this.latLngToCoords(18, 48.23486104355502,16.371135620688413)
-
-    /*this.getImage().subscribe(result => {
-        let objectURL = URL.createObjectURL(result);
-        this.img = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-    });*/
 
     this.getTile(this.tile, 18).then((img: Observable<Blob>) => {
       img.subscribe(result => {
@@ -76,9 +87,9 @@ export class MainComponent implements OnInit{
   }
 
 
-  async getAllTours(): Promise<Tour[]> {
-    const data = await fetch(this.restService);
-    return (await data.json()) ?? [];
+  async getAllTours() {
+    const tourURL = this.restService + "tour";
+    return this.client.get(tourURL, {responseType: 'json'});
   }
 
   latLngToCoords(zoom: number,lat: number,lon: number): {x: number, y: number} {
@@ -87,16 +98,37 @@ export class MainComponent implements OnInit{
     return {x: x_coord, y: y_coord};
   }
 
-  getImage() {
-    const url = "https://yt3.googleusercontent.com/PKRBxhCiGa8Y0vPmHa1E2cdjpLhUq2Pl-gESwP7kk2plGgxLdsbjyTd9VjcJwBMiY0HQ8bvx5Q=s900-c-k-c0x00ffffff-no-rj";
-    return this.client.get(url, { responseType: 'blob' });
+  async getTile(tile: {x: number, y: number}, zoom: number): Promise<Observable<Blob>>{
+    let osmURL = this.restService + "osm/" + zoom.toString() + "/" + tile.x.toString() + "/" + tile.y.toString();
+    return this.client.get(osmURL, {responseType: 'blob'});
   }
 
-  async getTile(tile: {x: number, y: number}, zoom: number): Promise<Observable<Blob>>{
-    let url = "https://tile.openstreetmap.org/{zoom}/{x}/{y}.png";
-    url.replace("{zoom}", zoom.toString()).replace("{x}", tile.x.toString()).replace("{y}", tile.y.toString());
-    //console.log(url);
-    //const image = fetch(url);
-    return this.client.get(url, {headers: {"User-Agent": "Vivaldi (if23b126@technikum-wien)"}, responseType: 'blob'});
+  addTour(): void {
+    let tourURL = this.restService + "tour";
+
+    let name = this.addRouteName;
+    let description = this.addRouteDescription;
+    let startpoint = this.addRouteStartpoint;
+    let endpoint = this.addRouteEndpoint;
+    let transportMode = this.addRouteTransportMode;
+    let distance = this.addRouteDistance;
+    let timeStart = this.addRouteTimeStart;
+    let timeend = this.addRouteTimeEnd;
+    let information = this.addRouteInformation;
+
+    let body = {
+      name: name,
+      description: description,
+      start: startpoint,
+      end: endpoint,
+      transportMode: transportMode,
+      distance: distance,
+      timeStart: Date.parse(timeStart),
+      timeEnd: Date.parse(timeend),
+      information: information
+    }
+    console.log(body);
+
+    //this.client.post(tourURL, body);
   }
 }

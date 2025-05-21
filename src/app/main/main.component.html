@@ -1,160 +1,154 @@
-<dialog #addRouteDialog>
-  <form class="add-route-form">
-    <div>
+<mat-grid-list cols="2" rowHeight="2:1">
+  <mat-grid-tile rowspan="2">
+    <div class="center-text center-content tour background-color">
+      <div class="center-text">
+          <button mat-button (click)="addRouteDialog.show()">Add route</button>
+      </div>
+
+      <div class="scrollable center mat-card">
+          <ul style="list-style: none;">
+            <li *ngFor="let tour of tours" >
+              <button (mouseenter)="hoveredTour = tour" (mouseleave)="hoveredTour = null" mat-button>
+                <span class="badge">{{tour.name}}</span>
+                <br>
+                <span class="badge">{{tour.start}} - {{tour.end}}</span>
+                <br>
+                <span class="name">{{tour.timeCreated}}</span>
+              </button>
+              <button mat-button (click)="updateTour = tour; updateRouteDialog.show()">Edit route</button>
+              <br>
+              <br>
+            </li>
+          </ul>
+      </div>
+    </div>
+  </mat-grid-tile>
+
+  <mat-grid-tile>
+    <img mat-card-sm-image [src]="img" alt="Map for Route" class="tile-image">
+  </mat-grid-tile>
+
+  <mat-grid-tile>
+    <mat-card class="info-route-form" *ngIf="hoveredTour" appearance="outlined" >
+      <mat-card-content >
+        <div class="tour-grid">
+          <div><mat-label>Route Name: {{hoveredTour.name}}</mat-label></div>
+          <br>
+          <div><mat-label>Description: {{hoveredTour.description}}</mat-label></div>
+          <div><mat-label>Start: {{hoveredTour.start}}</mat-label></div>
+          <div><mat-label>End: {{hoveredTour.end}}</mat-label></div>
+          <div><mat-label>Transport Mode: {{hoveredTour.transportMode}}</mat-label></div>
+          <div><mat-label>Distance: {{hoveredTour.distance}}</mat-label></div>
+          <div><mat-label>Time Started: {{hoveredTour.timeStart}}</mat-label></div>
+          <div><mat-label>Time End: {{hoveredTour.timeEnd}}</mat-label></div>
+          <div><mat-label>Time Created: {{hoveredTour.timeCreated}}</mat-label></div>
+          <div><mat-label>Information: {{hoveredTour.information}}</mat-label></div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </mat-grid-tile>
+</mat-grid-list>
+
+
+<dialog class="dialog" #addRouteDialog>
+  <form class="add-route-form" (ngSubmit)="addTour()" >
       <h1>Add a new route</h1>
       <mat-form-field class="example-full-width">
         <mat-label>Route Name</mat-label>
-        <input matInput placeholder="Name">
+        <input matInput id="{{addRouteName}}" placeholder="Name">
       </mat-form-field>
       <mat-form-field class="example-full-width">
         <mat-label>Description</mat-label>
-        <input matInput placeholder="Description">
+        <input matInput id="{{addRouteDescription}}" placeholder="Description">
       </mat-form-field>
       <table class="example-full-width" cellspacing="0"><tr>
         <td><mat-form-field class="example-full-width">
           <mat-label>Start</mat-label>
-          <input matInput placeholder="Start">
+          <input matInput id="{{addRouteStartpoint}}" placeholder="Start">
         </mat-form-field></td>
         <td><mat-form-field class="example-full-width">
           <mat-label>End</mat-label>
-          <input matInput placeholder="End">
+          <input matInput id="{{addRouteEndpoint}}" placeholder="End">
         </mat-form-field></td>
       </tr></table>
       <mat-form-field class="example-full-width">
         <mat-label>transportMode</mat-label>
-        <input matInput placeholder="transportMode">
+        <input matInput id="{{addRouteTransportMode}}" placeholder="transportMode">
       </mat-form-field>
       <mat-form-field class="example-full-width">
         <mat-label>distance</mat-label>
-        <input matInput placeholder="distance">
+        <input matInput id="{{addRouteDistance}}" type="number" placeholder="distance">
       </mat-form-field>
       <table class="example-full-width" cellspacing="0"><tr>
         <td><mat-form-field class="example-full-width">
           <mat-label>timeStart</mat-label>
-          <input matInput placeholder="timeStart">
+          <input matInput id="{{addRouteTimeStart}}" placeholder="timeStart">
         </mat-form-field></td>
         <td><mat-form-field class="example-full-width">
           <mat-label>timeEnd</mat-label>
-          <input matInput placeholder="timeEnd">
+          <input matInput id="{{addRouteTimeEnd}}" placeholder="timeEnd">
         </mat-form-field></td>
       </tr></table>
       <mat-form-field class="example-full-width">
         <mat-label>information</mat-label>
-        <input matInput placeholder="information">
+        <input matInput id="{{addRouteInformation}}" placeholder="information">
+      </mat-form-field>
+    <div>
+      <button mat-button type="submit">Save</button>
+      <button mat-button (click)="addRouteDialog.close()">Cancel</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog class="dialog" #updateRouteDialog>
+  <form class="update-route-form" *ngIf="updateTour">
+    <div>
+      <mat-form-field class="example-full-width">
+        <mat-label>Route Name</mat-label>
+        <input matInput placeholder={{updateTour.name}}>
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <mat-label>Description</mat-label>
+        <input matInput placeholder={{updateTour.description}}>
+      </mat-form-field>
+      <table class="example-full-width" cellspacing="0"><tr>
+        <td><mat-form-field class="example-full-width">
+          <mat-label>Start</mat-label>
+          <input matInput placeholder={{updateTour.start}}>
+        </mat-form-field></td>
+        <td><mat-form-field class="example-full-width">
+          <mat-label>End</mat-label>
+          <input matInput placeholder={{updateTour.end}}>
+        </mat-form-field></td>
+      </tr></table>
+      <mat-form-field class="example-full-width">
+        <mat-label>transportMode</mat-label>
+        <input matInput placeholder={{updateTour.transportMode}}>
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <mat-label>distance</mat-label>
+        <input matInput placeholder={{updateTour.distance}}>
+      </mat-form-field>
+      <table class="example-full-width" cellspacing="0"><tr>
+        <td><mat-form-field class="example-full-width">
+          <mat-label>timeStart</mat-label>
+          <input matInput placeholder={{updateTour.timeStart}}>
+        </mat-form-field></td>
+        <td><mat-form-field class="example-full-width">
+          <mat-label>timeEnd</mat-label>
+          <input matInput placeholder={{updateTour.timeEnd}}>
+        </mat-form-field></td>
+      </tr></table>
+      <mat-form-field class="example-full-width">
+        <mat-label>information</mat-label>
+        <input matInput placeholder={{updateTour.information}}>
       </mat-form-field>
       <mat-form-field class="example-full-width">
         <mat-label>timeCreated</mat-label>
-        <input matInput placeholder="timeCreated">
+        <input matInput placeholder= {{updateTour.timeCreated}}>
       </mat-form-field>
-    </div>
-    <div>
-      <button (click)="addRouteDialog.close()">Save</button>
-      <button (click)="addRouteDialog.close()">Cancel</button>
+      <button mat-button (click)="updateRouteDialog.close()">Save</button>
+      <button mat-button (click)="updateRouteDialog.close()">Cancel</button>
     </div>
   </form>
 </dialog>
-
-<dialog #updateRouteDialog>
-  <form class="update-route-form" *ngIf="updateTour">
-    <div>
-    <mat-form-field class="example-full-width">
-      <mat-label>Route Name</mat-label>
-      <input matInput placeholder={{updateTour.name}}>
-    </mat-form-field>
-    <mat-form-field class="example-full-width">
-      <mat-label>Description</mat-label>
-      <input matInput placeholder={{updateTour.description}}>
-    </mat-form-field>
-    <table class="example-full-width" cellspacing="0"><tr>
-      <td><mat-form-field class="example-full-width">
-        <mat-label>Start</mat-label>
-        <input matInput placeholder={{updateTour.start}}>
-      </mat-form-field></td>
-      <td><mat-form-field class="example-full-width">
-        <mat-label>End</mat-label>
-        <input matInput placeholder={{updateTour.end}}>
-      </mat-form-field></td>
-    </tr></table>
-    <mat-form-field class="example-full-width">
-      <mat-label>transportMode</mat-label>
-      <input matInput placeholder={{updateTour.transportMode}}>
-    </mat-form-field>
-    <mat-form-field class="example-full-width">
-      <mat-label>distance</mat-label>
-      <input matInput placeholder={{updateTour.distance}}>
-    </mat-form-field>
-    <table class="example-full-width" cellspacing="0"><tr>
-      <td><mat-form-field class="example-full-width">
-        <mat-label>timeStart</mat-label>
-        <input matInput placeholder={{updateTour.timeStart}}>
-      </mat-form-field></td>
-      <td><mat-form-field class="example-full-width">
-        <mat-label>timeEnd</mat-label>
-        <input matInput placeholder={{updateTour.timeEnd}}>
-      </mat-form-field></td>
-    </tr></table>
-    <mat-form-field class="example-full-width">
-      <mat-label>information</mat-label>
-      <input matInput placeholder={{updateTour.information}}>
-    </mat-form-field>
-    <mat-form-field class="example-full-width">
-      <mat-label>timeCreated</mat-label>
-      <input matInput placeholder= {{updateTour.timeCreated}}>
-    </mat-form-field>
-      <button (click)="updateRouteDialog.close()">Save</button>
-      <button (click)="updateRouteDialog.close()">Cancel</button>
-    </div>
-  </form>
-</dialog>
-
-<div class="container-fluid">
-<mat-card class="tour" appearance="outlined">
-  <mat-card-header>
-    <mat-card-title>
-        <button mat-icon-button (click)="addRouteDialog.show()" >Add route</button>
-    </mat-card-title>
-  </mat-card-header>
-  <br>
-  <mat-divider></mat-divider>
-
-  <mat-card-content >
-    <ul class="tour" style="list-style: none;">
-      <li *ngFor="let tour of tours" >
-        <button (mouseenter)="hoveredTour = tour" (mouseleave)="hoveredTour = null" class="tour-button">
-          <span class="badge">{{tour.name}}</span>
-          <br>
-          <span class="badge">{{tour.start}} - {{tour.end}}</span>
-          <br>
-          <span class="name">{{tour.timeCreated}}</span>
-        </button>
-        <button mat-icon-button (click)="updateTour = tour; updateRouteDialog.show()">Edit route</button>
-        <br>
-        <br>
-      </li>
-    </ul>
-  </mat-card-content>
-</mat-card>
-</div>
-
-  <mat-card class="info-route-form" *ngIf="hoveredTour" appearance="outlined" >
-    <mat-card-content >
-      <div class="tour-grid">
-        <div><mat-label>Route Name: {{hoveredTour.name}}</mat-label></div>
-        <br>
-        <div><mat-label>Description: {{hoveredTour.description}}</mat-label></div>
-        <div><mat-label>Start: {{hoveredTour.start}}</mat-label></div>
-        <div><mat-label>End: {{hoveredTour.end}}</mat-label></div>
-        <div><mat-label>Transport Mode: {{hoveredTour.transportMode}}</mat-label></div>
-        <div><mat-label>Distance: {{hoveredTour.distance}}</mat-label></div>
-        <div><mat-label>Time Started: {{hoveredTour.timeStart}}</mat-label></div>
-        <div><mat-label>Time End: {{hoveredTour.timeEnd}}</mat-label></div>
-        <div><mat-label>Time Created: {{hoveredTour.timeCreated}}</mat-label></div>
-        <div><mat-label>Information: {{hoveredTour.information}}</mat-label></div>
-      </div>
-    </mat-card-content>
-  </mat-card>
-
-
-
-<img mat-card-sm-image [src]="img" alt="GitHub"/>
-
