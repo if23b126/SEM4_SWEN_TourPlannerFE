@@ -1,9 +1,9 @@
-import {Component, Injectable, OnInit} from '@angular/core';
+import {Component, Inject, inject, OnInit, Optional} from '@angular/core';
 import {NgForOf, NgIf} from '@angular/common';
 import {Tour} from '../tour'
 import {MatCard, MatCardContent, MatCardSmImage} from '@angular/material/card';
-import {MatFormField, MatInputModule, MatLabel} from '@angular/material/input';
-import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {MatFormField, MatInput, MatInputModule, MatLabel} from '@angular/material/input';
+import {FormsModule} from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {HttpClient} from '@angular/common/http';
 import {DomSanitizer} from '@angular/platform-browser';
@@ -12,6 +12,14 @@ import {parseJson} from '@angular/cli/src/utilities/json-file';
 import {MatButton} from '@angular/material/button';
 import {LayoutModule} from '@angular/cdk/layout';
 import {MatGridList, MatGridTile} from '@angular/material/grid-list';
+import {
+  MatDialogContent,
+  MatDialog,
+  MatDialogClose,
+  MatDialogActions,
+  MatDialogRef,
+  MatDialogModule
+} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-main',
@@ -21,7 +29,6 @@ import {MatGridList, MatGridTile} from '@angular/material/grid-list';
     MatCardContent,
     MatCard,
     MatLabel,
-    MatFormField,
     FormsModule,
     MatFormFieldModule,
     MatInputModule,
@@ -30,10 +37,16 @@ import {MatGridList, MatGridTile} from '@angular/material/grid-list';
     MatGridList,
     MatGridTile,
     MatButton,
-    ReactiveFormsModule
+    MatDialogModule
   ],
   templateUrl: './main.component.html',
-  styleUrl: './main.component.css'
+  styleUrl: './main.component.css',
+  providers: [
+    {
+      provide: MatDialogRef,
+      useValue: {}
+    }
+  ]
 })
 
 export class MainComponent implements OnInit{
@@ -54,18 +67,15 @@ export class MainComponent implements OnInit{
   hoveredTour: any = null;
   updateTour: any = null;
   img: any;
-  addRouteName: string = "";
-  addRouteDescription: string = "";
-  addRouteStartpoint: string = "";
-  addRouteEndpoint: string = "";
-  addRouteTransportMode: string = "";
-  addRouteDistance: number = 0;
-  addRouteTimeStart: string = "";
-  addRouteTimeEnd: string = "";
-  addRouteInformation: string = "";
-  restService = "http://localhost:8080/"
+  readonly addRouteDialog = inject(MatDialog);
+  restService: string = "http://localhost:8080/"
+  addTourDialogService: any = undefined;
+  editTourDialogService: any = undefined;
+  readonly dialog = inject(MatDialog);
 
   constructor(private client: HttpClient, private sanitizer: DomSanitizer) {
+    this.addTourDialogService = new AddTourDialogService(this.client);
+    this.editTourDialogService = new EditTourDialogService();
   }
 
   ngOnInit() {
@@ -103,32 +113,205 @@ export class MainComponent implements OnInit{
     return this.client.get(osmURL, {responseType: 'blob'});
   }
 
+  openAddTourDialog(): void {
+    const addTourDialog = this.dialog.open(AddTourDialogService);
+
+    addTourDialog.afterClosed().subscribe(result => {
+      console.log("dialog closed");
+
+      if(result !== undefined) {
+        this.addTourDialogService.clearAddTourInputs();
+      }
+    })
+  }
+
+  openEditTourDialog(tour: Tour){
+    const editTourDialog = this.dialog.open(EditTourDialogService, {data: tour});
+
+    editTourDialog.afterClosed().subscribe(result => {
+      console.log("dialog closed");
+
+      if(result !== undefined) {
+        this.editTourDialogService.clearEditTourInputs();
+      }
+    })
+  }
+}
+
+
+@Component({
+  selector: 'add-tour-dialog',
+  templateUrl: 'add-tour-dialog.html',
+  imports: [
+    MatDialogContent,
+    MatFormFieldModule,
+    MatDialogActions,
+    FormsModule,
+    MatInput,
+    MatButton
+  ],
+  providers: [
+    {
+      provide: MainComponent,
+      useValue: {}
+    },
+    {
+      provide: String,
+      useValue: {}
+    }
+  ]
+})
+
+
+export class AddTourDialogService {
+  name: string = "";
+  description: string = "";
+  startpoint: string = "";
+  endpoint: string = "";
+  transportMode: string = "";
+  distance: number = 0;
+  timeStart: string = "";
+  timeEnd: string = "";
+  information: string = "";
+  restService: string = "http://localhost:8080/";
+
+  readonly dialogRef = inject(MatDialogRef<AddTourDialogService>);
+
+  constructor(private client: HttpClient) {
+  }
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
   addTour(): void {
-    let tourURL = this.restService + "tour";
+    let name = this.name;
+    let description = this.description;
+    let startpoint = this.startpoint;
+    let endpoint = this.endpoint;
+    let transportMode = this.transportMode;
+    let distance = this.distance;
+    let timeStart = this.timeStart;
+    let timeEnd = this.timeEnd;
+    let information = this.information;
 
-    let name = this.addRouteName;
-    let description = this.addRouteDescription;
-    let startpoint = this.addRouteStartpoint;
-    let endpoint = this.addRouteEndpoint;
-    let transportMode = this.addRouteTransportMode;
-    let distance = this.addRouteDistance;
-    let timeStart = this.addRouteTimeStart;
-    let timeend = this.addRouteTimeEnd;
-    let information = this.addRouteInformation;
-
-    let body = {
+    let body: Tour = {
       name: name,
       description: description,
       start: startpoint,
       end: endpoint,
       transportMode: transportMode,
       distance: distance,
-      timeStart: Date.parse(timeStart),
-      timeEnd: Date.parse(timeend),
-      information: information
+      timeStart: timeStart,
+      timeEnd: timeEnd,
+      information: information,
+      timeCreated: ""
     }
+
     console.log(body);
 
-    //this.client.post(tourURL, body);
+    this.sendTour(body).then((answ) => {
+      answ.subscribe(result => {
+        console.log(result);
+      })
+    })
+
+    this.onNoClick();
+  }
+
+  async sendTour(body: Tour) {
+    console.log(this.restService)
+    const tourURL = this.restService + "tour";
+    console.log(tourURL);
+    return this.client.post(tourURL, body);
+  }
+
+  clearAddTourInputs(): void {
+
+    this.name = "";
+    this.description = "";
+    this.startpoint = "";
+    this.endpoint = "";
+    this.transportMode = "";
+    this.distance = 0;
+    this.timeStart = "";
+    this.timeEnd = "";
+    this.information = "";
   }
 }
+
+
+
+@Component({
+  selector: 'edit-tour-dialog',
+  templateUrl: 'edit-tour-dialog.html',
+  imports: [
+    MatDialogContent,
+    MatFormFieldModule,
+    MatDialogActions,
+    FormsModule,
+    MatInput,
+    MatButton
+  ],
+  providers: [
+    {
+      provide: MainComponent,
+      useValue: {}
+    },
+    {
+      provide: String,
+      useValue: {}
+    }
+  ]
+})
+
+export class EditTourDialogService {
+  name: string = "";
+  description: string = "";
+  startpoint: string = "";
+  endpoint: string = "";
+  transportMode: string = "";
+  distance: number = 0;
+  timeStart: string = "";
+  timeEnd: string = "";
+  information: string = "";
+  readonly dialogRef = inject(MatDialogRef<EditTourDialogService>);
+  updateTour: Tour = {
+    name: "",
+    description: "",
+    start: "",
+    end: "",
+    transportMode: "",
+    distance: 0,
+    timeStart: "",
+    timeEnd: "",
+    information: "",
+    timeCreated: ""
+  }
+
+  constructor() {
+  }
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
+  editTour(): void {
+  }
+
+  clearEditTourInputs(): void {
+
+    this.name = "";
+    this.description = "";
+    this.startpoint = "";
+    this.endpoint = "";
+    this.transportMode = "";
+    this.distance = 0;
+    this.timeStart = "";
+    this.timeEnd = "";
+    this.information = "";
+  }
+}
+
+
+

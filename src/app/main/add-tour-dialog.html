@@ -1,0 +1,49 @@
+<h1>Add a new Tour</h1>
+<mat-dialog-content>
+  <form class="add-route-form">
+    <mat-form-field class="example-full-width">
+      <mat-label>Route Name</mat-label>
+      <input required="required" matInput [(ngModel)]="name" name="tourname" placeholder="Name">
+    </mat-form-field>
+    <mat-form-field class="example-full-width">
+      <mat-label>Description</mat-label>
+      <input matInput [(ngModel)]="description" name="newTourDescription" placeholder="Description">
+    </mat-form-field>
+    <table class="example-full-width" cellspacing="0"><tr>
+      <td><mat-form-field class="example-full-width">
+        <mat-label>Start</mat-label>
+        <input matInput [(ngModel)]="startpoint" name="newTourStartpoint" placeholder="Start">
+      </mat-form-field></td>
+      <td><mat-form-field class="example-full-width">
+        <mat-label>End</mat-label>
+        <input matInput [(ngModel)]="endpoint" name="newTourEndpoint" placeholder="End">
+      </mat-form-field></td>
+    </tr></table>
+    <mat-form-field class="example-full-width">
+      <mat-label>transportMode</mat-label>
+      <input matInput [(ngModel)]="transportMode" name="newTourTransportMode" placeholder="transportMode">
+    </mat-form-field>
+    <mat-form-field class="example-full-width">
+      <mat-label>distance</mat-label>
+      <input matInput [(ngModel)]="distance" name="newTourDistance" type="number" placeholder="distance">
+    </mat-form-field>
+    <table class="example-full-width" cellspacing="0"><tr>
+      <td><mat-form-field class="example-full-width">
+        <mat-label>timeStart</mat-label>
+        <input matInput [(ngModel)]="timeStart" name="newTourTimeStart" placeholder="timeStart">
+      </mat-form-field></td>
+      <td><mat-form-field class="example-full-width">
+        <mat-label>timeEnd</mat-label>
+        <input matInput [(ngModel)]="timeEnd" name="newTourTimeEnd" placeholder="timeEnd">
+      </mat-form-field></td>
+    </tr></table>
+    <mat-form-field class="example-full-width">
+      <mat-label>information</mat-label>
+      <input matInput [(ngModel)]="information" name="newTourInformation" placeholder="information">
+    </mat-form-field>
+    <mat-dialog-actions>
+      <button mat-button type="submit" (click)="addTour()">Save</button>
+      <button mat-button (click)="onNoClick()">Cancel</button>
+    </mat-dialog-actions>
+  </form>
+</mat-dialog-content>
