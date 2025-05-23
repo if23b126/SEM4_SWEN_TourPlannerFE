@@ -1,4 +1,4 @@
-import {Component, Inject, inject, OnInit, Optional} from '@angular/core';
+import {Component, Inject, inject, model, OnInit, Optional} from '@angular/core';
 import {NgForOf, NgIf} from '@angular/common';
 import {Tour} from '../tour'
 import {MatCard, MatCardContent, MatCardSmImage} from '@angular/material/card';
@@ -15,10 +15,10 @@ import {MatGridList, MatGridTile} from '@angular/material/grid-list';
 import {
   MatDialogContent,
   MatDialog,
-  MatDialogClose,
   MatDialogActions,
   MatDialogRef,
-  MatDialogModule
+  MatDialogModule,
+  MAT_DIALOG_DATA, MatDialogTitle
 } from '@angular/material/dialog';
 
 @Component({
@@ -126,7 +126,9 @@ export class MainComponent implements OnInit{
   }
 
   openEditTourDialog(tour: Tour){
-    const editTourDialog = this.dialog.open(EditTourDialogService, {data: tour});
+    const editTourDialog = this.dialog.open(EditTourDialogService, {
+      data: tour
+    });
 
     editTourDialog.afterClosed().subscribe(result => {
       console.log("dialog closed");
@@ -148,7 +150,8 @@ export class MainComponent implements OnInit{
     MatDialogActions,
     FormsModule,
     MatInput,
-    MatButton
+    MatButton,
+    MatDialogTitle
   ],
   providers: [
     {
@@ -251,7 +254,8 @@ export class AddTourDialogService {
     MatDialogActions,
     FormsModule,
     MatInput,
-    MatButton
+    MatButton,
+    MatDialogTitle
   ],
   providers: [
     {
@@ -259,7 +263,7 @@ export class AddTourDialogService {
       useValue: {}
     },
     {
-      provide: String,
+      provide: MAT_DIALOG_DATA,
       useValue: {}
     }
   ]
@@ -276,18 +280,8 @@ export class EditTourDialogService {
   timeEnd: string = "";
   information: string = "";
   readonly dialogRef = inject(MatDialogRef<EditTourDialogService>);
-  updateTour: Tour = {
-    name: "",
-    description: "",
-    start: "",
-    end: "",
-    transportMode: "",
-    distance: 0,
-    timeStart: "",
-    timeEnd: "",
-    information: "",
-    timeCreated: ""
-  }
+  //readonly data = inject<Tour>(MAT_DIALOG_DATA)
+  //updateTour: any = model(this.data);
 
   constructor() {
   }
@@ -297,6 +291,8 @@ export class EditTourDialogService {
   }
 
   editTour(): void {
+
+    this.onNoClick();
   }
 
   clearEditTourInputs(): void {
