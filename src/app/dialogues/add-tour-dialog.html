@@ -42,7 +42,7 @@
       <input matInput [(ngModel)]="information" name="newTourInformation" placeholder="information">
     </mat-form-field>
     <mat-dialog-actions>
-      <button mat-button type="submit" (click)="addTour()">Save</button>
+      <button mat-button type="submit" [mat-dialog-close]="addTour()">Save</button>
       <button mat-button (click)="onNoClick()">Cancel</button>
     </mat-dialog-actions>
   </form>

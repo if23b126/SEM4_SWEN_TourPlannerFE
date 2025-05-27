@@ -3,7 +3,7 @@
   <form class="add-route-form">
     <mat-form-field class="example-full-width">
       <mat-label>Route Name</mat-label>
-      <input matInput [(ngModel)]="name" name="tourname" placeholder="{{name}}">
+      <input matInput [(ngModel)]="name" name="tourname" placeholder="{{this.name}}">
     </mat-form-field>
     <mat-form-field class="example-full-width">
       <mat-label>Description</mat-label>
@@ -42,8 +42,8 @@
       <input matInput [(ngModel)]="information" name="editTourInformation" placeholder="information">
     </mat-form-field>
     <mat-dialog-actions>
-      <button mat-button type="submit" (click)="editTour()">Save</button>
-      <button mat-button (click)="onNoClick()">Cancel</button>
+      <button mat-button type="submit" [mat-dialog-close]="editTour()">Save</button>
+      <button mat-button (click)="onNoClick()" >Cancel</button>
     </mat-dialog-actions>
   </form>
 </mat-dialog-content>
