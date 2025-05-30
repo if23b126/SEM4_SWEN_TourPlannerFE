@@ -116,10 +116,8 @@ export class MainComponent implements OnInit{
     this.addTourDialog = this.dialog.open(AddTourDialog);
 
     this.addTourDialog.afterClosed().subscribe((result: Tour) => {
-      console.log("dialog closed");
-
       if(result !== undefined) {
-        //this.addTour(result).then(r => console.log("tour added"));
+        this.addTour(result).then(r => r.subscribe(a => {console.log("tour added")}));
       }
     })
   }
@@ -134,7 +132,7 @@ export class MainComponent implements OnInit{
       console.log("dialog closed");
 
       if(result !== undefined) {
-        //this.updateTour(result).then(r => console.log("tour updated"));
+        //this.updateTour(result).then(r => r.subscribe(a => {console.log("tour edited")}));
       }
     })
   }
@@ -147,7 +145,6 @@ export class MainComponent implements OnInit{
 
   async updateTour(body: Tour) {
     const tourURL = this.restService + "tour";
-    console.log(body);
     return this.client.put(tourURL, body);
   }
 }
