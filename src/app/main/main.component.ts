@@ -119,7 +119,7 @@ export class MainComponent implements OnInit{
       console.log("dialog closed");
 
       if(result !== undefined) {
-        this.addTour(result).then(r => console.log("tour added"));
+        //this.addTour(result).then(r => console.log("tour added"));
       }
     })
   }
@@ -134,7 +134,7 @@ export class MainComponent implements OnInit{
       console.log("dialog closed");
 
       if(result !== undefined) {
-        this.updateTour(result).then(r => console.log("tour updated"));
+        //this.updateTour(result).then(r => console.log("tour updated"));
       }
     })
   }
