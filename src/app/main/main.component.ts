@@ -57,6 +57,7 @@ import {LogComponent} from '../log/log.component';
 export class MainComponent implements OnInit{
 
   logs: Log[] =[{
+    id: 0,
     comment: "",
     difficulty: 0,
     distance: 0,
@@ -64,6 +65,7 @@ export class MainComponent implements OnInit{
     time: "",
     timeEnd: "",
     timeStart: "",
+    tourid: 0,
   }]
 
   tours: Tour[] = [{
@@ -144,6 +146,7 @@ export class MainComponent implements OnInit{
         this.addTour(result).then(r => r.subscribe(a => {console.log("tour added")}));
       }
     })
+    this.getAllTours();
   }
 
   openEditTourDialog(tour: Tour){
@@ -151,22 +154,49 @@ export class MainComponent implements OnInit{
     dialogConfig.data = tour;
     dialogConfig.autoFocus = true;
     this.editTourDialog = this.dialog.open(EditTourDialog, dialogConfig);
-
     this.editTourDialog.afterClosed().subscribe((result: Tour) => {
       console.log("dialog closed");
 
       if(result !== undefined) {
-        //this.updateTour(result).then(r => r.subscribe(a => {console.log("tour edited")}));
+        result.id = tour.id
+        this.updateTour(result).then(r => r.subscribe(a => {console.log("tour edited")}));
       }
     })
+    return this.getAllTours();
   }
 
+  openEditLogDialog(log: Log){
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.data = log;
+    dialogConfig.autoFocus = true;
+    this.getLog = this.dialog.open(LogComponent, dialogConfig);
+    this.getLog.afterClosed().subscribe((result: Log) => {
+      console.log("dialog closed");
+
+      if(result !== undefined) {
+        result.id = log.id;
+        result.tourid = log.tourid;
+        this.updateLog(result).then(r => r.subscribe(a => {console.log("tour edited")}));
+      }
+    })
+    return this.getAllTours();
+  }
+
+  deleteTourButton(tour: Tour){
+    if(tour !== undefined) {
+      this.deleteTour(tour).then(r => r.subscribe(a => {console.log("tour deleted" );}));
+    }
+    return this.getAllTours();
+  }
+
+  deleteLogButton(log: Log){
+    if(log !== undefined) {
+      this.deleteLog(log).then(r => r.subscribe(a => {console.log("log deleted" );}));
+    }
+  }
 
   async getAllLogs(tour: Tour) {
-    console.log("wird aufgerufen");
     const logURL = this.restService + "logs/" + tour.id;
-    console.log(logURL);
-    console.log(tour.id);
     return this.client.get(logURL, {responseType: 'json'});
   }
 
@@ -187,8 +217,23 @@ export class MainComponent implements OnInit{
   }
 
   async updateTour(body: Tour) {
-    const tourURL = this.restService + "tour";
+    const tourURL = this.restService + "tour/"+ body.id;
     return this.client.put(tourURL, body);
+  }
+
+  async updateLog(body: Log) {
+    const tourURL = this.restService + "logs/"+ body.id;
+    return this.client.put(tourURL, body);
+  }
+
+  async deleteTour(body: Tour) {
+    const tourURL = this.restService + "tour/"+ body.id;
+    return this.client.delete(tourURL);
+  }
+
+  async deleteLog(body: Log) {
+    const tourURL = this.restService + "logs/"+ body.id;
+    return this.client.delete(tourURL);
   }
 
   protected readonly count = count;

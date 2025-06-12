@@ -18,6 +18,7 @@
                   <span class="name">{{tour.timeCreated}}</span>
                 </button>
                 <button mat-button (click)="openEditTourDialog(tour)">Edit route</button>
+                <button mat-button (click)="deleteTourButton(tour)">delete</button>
                 <br>
                 <br>
               </li>
@@ -43,6 +44,8 @@
                   <br>
                   <span class="name">{{"rating: " + log.rating }}</span>
                 </button>
+                <button mat-button (click)="openEditLogDialog(log)">Edit log</button>
+                <button mat-button (click)="deleteLogButton(log)">delete</button>
                 <br>
                 <br>
               </li>
@@ -82,7 +85,6 @@
         <mat-card-content >
           <div class="tour-grid">
             <div><mat-label>Rating: {{hoveredLog.rating + "/5"}}</mat-label></div>
-            <br>
             <div><mat-label>Difficulty: {{hoveredLog.difficulty + "/5"}}</mat-label></div>
             <div><mat-label>Distance: {{hoveredLog.distance + "km"}}</mat-label></div>
             <div><mat-label>Time: {{hoveredLog.time}}</mat-label></div>

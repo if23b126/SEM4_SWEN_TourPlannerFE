@@ -1,4 +1,5 @@
 export interface Log {
+  id: number;
   comment: string;
   difficulty: number;
   distance: number;
@@ -6,4 +7,5 @@ export interface Log {
   time: string;
   timeEnd: string;
   timeStart: string;
+  tourid: number;
 }
