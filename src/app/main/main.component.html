@@ -1,26 +1,57 @@
 <mat-grid-list cols="2" rowHeight="2:1">
   <mat-grid-tile rowspan="2">
     <div class="center-text center-content tour background-color">
+      <span *ngIf="!isDisabled; else prompt">
       <div class="center-text">
           <button mat-button (click)="openAddTourDialog()">Add Tour</button>
       </div>
 
       <div class="scrollable center mat-card">
           <ul style="list-style: none;">
-            <li *ngFor="let tour of tours" >
-              <button (mouseenter)="hoveredTour = tour" (mouseleave)="hoveredTour = null" mat-button>
-                <span class="badge">{{tour.name}}</span>
+
+              <li *ngFor="let tour of tours"  >
+                <button (mouseenter)="hoveredTour = tour" (mouseleave)="hoveredTour = null"  (click)="openGetLog(tour)" mat-button>
+                  <span class="badge">{{tour.name}}</span>
+                  <br>
+                  <span class="badge">{{tour.start}} - {{tour.end}}</span>
+                  <br>
+                  <span class="name">{{tour.timeCreated}}</span>
+                </button>
+                <button mat-button (click)="openEditTourDialog(tour)">Edit route</button>
                 <br>
-                <span class="badge">{{tour.start}} - {{tour.end}}</span>
                 <br>
-                <span class="name">{{tour.timeCreated}}</span>
-              </button>
-              <button mat-button (click)="openEditTourDialog(tour)">Edit route</button>
-              <br>
-              <br>
-            </li>
+              </li>
           </ul>
+        </div>
+      </span>
+
+
+      <div>
+        <ng-template #prompt>
+          <div>
+            <button *ngIf="isDisabled" id="changeText" (click)="enableDisable()" mat-button>
+              back
+            </button>
+          </div>
+          <div class="scrollable center mat-card">
+            <ul style="list-style: none;">
+              <li *ngFor="let log of logs">
+                <button  (click)="hoveredLog = log" mat-button>
+                  <span class="badge">{{"difficulty: " + log.difficulty }}</span>
+                  <br>
+                  <span class="badge">{{"distance: " + log.distance }}</span>
+                  <br>
+                  <span class="name">{{"rating: " + log.rating }}</span>
+                </button>
+                <br>
+                <br>
+              </li>
+            </ul>
+          </div>
+        </ng-template>
       </div>
+
+
     </div>
   </mat-grid-tile>
 
@@ -29,7 +60,7 @@
   </mat-grid-tile>
 
   <mat-grid-tile>
-    <mat-card class="info-route-form" *ngIf="hoveredTour" appearance="outlined" >
+    <mat-card class="info-route-form" *ngIf="hoveredTour && !isDisabled" appearance="outlined" >
       <mat-card-content >
         <div class="tour-grid">
           <div><mat-label>Route Name: {{hoveredTour.name}}</mat-label></div>
@@ -46,5 +77,21 @@
         </div>
       </mat-card-content>
     </mat-card>
+
+      <mat-card class="info-route-form"  *ngIf="hoveredLog && isDisabled" appearance="outlined" >
+        <mat-card-content >
+          <div class="tour-grid">
+            <div><mat-label>Rating: {{hoveredLog.rating + "/5"}}</mat-label></div>
+            <br>
+            <div><mat-label>Difficulty: {{hoveredLog.difficulty + "/5"}}</mat-label></div>
+            <div><mat-label>Distance: {{hoveredLog.distance + "km"}}</mat-label></div>
+            <div><mat-label>Time: {{hoveredLog.time}}</mat-label></div>
+            <div><mat-label>Time Started: {{hoveredLog.timeStart}}</mat-label></div>
+            <div><mat-label>Time End: {{hoveredLog.timeEnd}}</mat-label></div>
+            <div><mat-label>Comment: {{hoveredLog.comment}}</mat-label></div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
   </mat-grid-tile>
 </mat-grid-list>

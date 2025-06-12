@@ -1,13 +1,14 @@
 import {Component, Inject, inject, OnInit} from '@angular/core';
-import {NgForOf, NgIf} from '@angular/common';
+import {NgFor, NgForOf, NgIf, CommonModule} from '@angular/common';
 import {Tour} from '../tour'
+import {Log} from '../log'
 import {MatCard, MatCardContent, MatCardSmImage} from '@angular/material/card';
 import {MatInput, MatInputModule, MatLabel} from '@angular/material/input';
 import {FormsModule} from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {HttpClient} from '@angular/common/http';
 import {DomSanitizer} from '@angular/platform-browser';
-import {Observable} from 'rxjs';
+import {count, Observable} from 'rxjs';
 import {parseJson} from '@angular/cli/src/utilities/json-file';
 import {MatButton} from '@angular/material/button';
 import {LayoutModule} from '@angular/cdk/layout';
@@ -19,12 +20,15 @@ import {
   MatDialogRef
 } from '@angular/material/dialog';
 import { AddTourDialog } from '../dialogues/add-tour-dialog';
-import { EditTourDialog } from '../dialogues/edit-tour-dialog';
+import {EditTourDialog} from '../dialogues/edit-tour-dialog';
+import {LogComponent} from '../log/log.component';
 
 @Component({
+  standalone: true,
   selector: 'app-main',
   imports: [
     NgIf,
+    NgFor,
     NgForOf,
     MatCardContent,
     MatCard,
@@ -37,7 +41,8 @@ import { EditTourDialog } from '../dialogues/edit-tour-dialog';
     MatGridList,
     MatGridTile,
     MatButton,
-    MatDialogModule
+    MatDialogModule,
+    CommonModule
   ],
   templateUrl: './main.component.html',
   styleUrl: './main.component.css',
@@ -51,7 +56,18 @@ import { EditTourDialog } from '../dialogues/edit-tour-dialog';
 
 export class MainComponent implements OnInit{
 
+  logs: Log[] =[{
+    comment: "",
+    difficulty: 0,
+    distance: 0,
+    rating: 0,
+    time: "",
+    timeEnd: "",
+    timeStart: "",
+  }]
+
   tours: Tour[] = [{
+    id: 0,
     name: "",
     description: "",
     start: "",
@@ -65,6 +81,7 @@ export class MainComponent implements OnInit{
   }];
   tile: {x: number, y: number} = {x: 0, y: 0};
   hoveredTour: any = null;
+  hoveredLog: any = null;
   img: any;
   readonly addRouteDialog = inject(MatDialog);
   restService: string = "http://localhost:8080/"
@@ -74,7 +91,14 @@ export class MainComponent implements OnInit{
     private client: HttpClient,
     private sanitizer: DomSanitizer,
     private addTourDialog: MatDialogRef<AddTourDialog>,
+    private getLog: MatDialogRef<LogComponent>,
     private editTourDialog: MatDialogRef<EditTourDialog>) {
+  }
+
+  isDisabled: boolean = false;
+
+  enableDisable() {
+    this.isDisabled = this.isDisabled ? false : true;
   }
 
   ngOnInit() {
@@ -138,6 +162,25 @@ export class MainComponent implements OnInit{
   }
 
 
+  async getAllLogs(tour: Tour) {
+    console.log("wird aufgerufen");
+    const logURL = this.restService + "logs/" + tour.id;
+    console.log(logURL);
+    console.log(tour.id);
+    return this.client.get(logURL, {responseType: 'json'});
+  }
+
+  openGetLog(tour: Tour){
+    this.isDisabled = this.isDisabled ? false : true;
+    this.getAllLogs(tour).then((logs: Observable<object>) => {
+      logs.subscribe(result => {
+        this.logs = parseJson(JSON.stringify(result));
+      })
+    })
+
+  }
+
+
   async addTour(body: Tour) {
     const tourURL = this.restService + "tour";
     return this.client.post(tourURL, body);
@@ -147,4 +190,6 @@ export class MainComponent implements OnInit{
     const tourURL = this.restService + "tour";
     return this.client.put(tourURL, body);
   }
+
+  protected readonly count = count;
 }

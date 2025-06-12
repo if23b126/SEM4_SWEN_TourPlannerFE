@@ -48,6 +48,7 @@ import {
 })
 
 export class AddTourDialog {
+  id: number = 0;
   name: string = "";
   description: string = "";
   startpoint: string = "";
@@ -83,6 +84,7 @@ export class AddTourDialog {
 
   addTour(): Tour {
     return {
+      id: this.id,
       name: this.name,
       description: this.description,
       start: this.startpoint,

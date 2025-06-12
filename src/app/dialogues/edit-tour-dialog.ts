@@ -45,6 +45,7 @@ import {MatOption} from '@angular/material/core';
 })
 
 export class EditTourDialog {
+  id: number = 0;
   name: string = "";
   description: string = "";
   startpoint: string = "";
@@ -96,6 +97,7 @@ export class EditTourDialog {
 
   editTour(): Tour {
     return {
+      id: this.id,
       name: this.name,
       description: this.description,
       start: this.startpoint,
