@@ -1,0 +1,60 @@
+<h1 mat-dialog-title>Add a new Log</h1>
+<mat-dialog-content>
+  <form class="add-route-form">
+    <mat-form-field class="example-full-width">
+      <mat-label>Rating</mat-label>
+      <input required matInput [(ngModel)]="rating" name="lograting" placeholder="Rating">
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Difficulty</mat-label>
+      <input required matInput [(ngModel)]="difficulty" name="logDifficulty" placeholder="Difficulty">
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Distance</mat-label>
+      <input required matInput [(ngModel)]="distance" name="logDistance" placeholder="Distance">
+    </mat-form-field>
+
+    <table class="example-full-width">
+      <tr>
+        <td>
+          <mat-form-field class="example-full-width">
+            <mat-label>Starttime</mat-label>
+            <input matInput [ngxMatDatetimePicker]="timeStartPicker" placeholder="Choose a date"
+                   [disabled]="disabled" [(ngModel)]="timeStart" name="newLogTimeStart">
+            <ngx-mat-datepicker-toggle matSuffix [for]="timeStartPicker"></ngx-mat-datepicker-toggle>
+            <ngx-mat-datetime-picker #timeStartPicker>
+              <ngx-mat-datepicker-actions>
+                <button mat-button ngxMatDatepickerCancel>Cancel</button>
+                <button mat-raised-button color="primary" ngxMatDatepickerApply>Apply</button>
+              </ngx-mat-datepicker-actions>
+            </ngx-mat-datetime-picker>
+          </mat-form-field>
+        </td>
+        <td>
+          <mat-form-field class="example-full-width">
+            <mat-label>Endtime</mat-label>
+            <input matInput [ngxMatDatetimePicker]="timeEndPicker" placeholder="Choose a date"
+                   [disabled]="disabled" [(ngModel)]="timeEnd" name="newLogTimeEnd">
+            <ngx-mat-datepicker-toggle matSuffix [for]="timeEndPicker"></ngx-mat-datepicker-toggle>
+            <ngx-mat-datetime-picker #timeEndPicker>
+              <ngx-mat-datepicker-actions>
+                <button mat-button ngxMatDatepickerCancel>Cancel</button>
+                <button mat-raised-button color="primary" ngxMatDatepickerApply>Apply</button>
+              </ngx-mat-datepicker-actions>
+            </ngx-mat-datetime-picker>
+          </mat-form-field>
+        </td>
+      </tr>
+    </table>
+    <mat-form-field class="example-full-width">
+      <mat-label>comment</mat-label>
+      <input required matInput [(ngModel)]="comment" name="logComment" placeholder="comment">
+    </mat-form-field>
+    <mat-dialog-actions>
+      <button mat-button type="submit" [mat-dialog-close]="addLog()">Save</button>
+      <button mat-button (click)="onNoClick()">Cancel</button>
+    </mat-dialog-actions>
+  </form>
+</mat-dialog-content>

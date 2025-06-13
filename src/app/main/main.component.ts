@@ -21,7 +21,8 @@ import {
 } from '@angular/material/dialog';
 import { AddTourDialog } from '../dialogues/add-tour-dialog';
 import {EditTourDialog} from '../dialogues/edit-tour-dialog';
-import {LogComponent} from '../log/log.component';
+import {AddLogDialog } from '../dialogues/add-log-dialog';
+import {EditLogDialog} from '../dialogues/edit-log-dialog';
 
 @Component({
   standalone: true,
@@ -92,7 +93,8 @@ export class MainComponent implements OnInit{
     private client: HttpClient,
     private sanitizer: DomSanitizer,
     private addTourDialog: MatDialogRef<AddTourDialog>,
-    private getLog: MatDialogRef<LogComponent>,
+    private addLogDialog: MatDialogRef<AddLogDialog>,
+    private editLogDialog: MatDialogRef<EditLogDialog>,
     private editTourDialog: MatDialogRef<EditTourDialog>) {
   }
 
@@ -158,9 +160,9 @@ export class MainComponent implements OnInit{
   }
 
   openAddLogButton(): void{
-    this.getLog = this.dialog.open(LogComponent);
+    this.addLogDialog = this.dialog.open(AddLogDialog);
 
-    this.getLog.afterClosed().subscribe((result: Log) => {
+    this.addLogDialog.afterClosed().subscribe((result: Log) => {
       if(result !== undefined) {
         this.addLog(result).then(r => r.subscribe(a => {console.log("tour added")}));
       }
@@ -188,8 +190,8 @@ export class MainComponent implements OnInit{
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = log;
     dialogConfig.autoFocus = true;
-    this.getLog = this.dialog.open(LogComponent, dialogConfig);
-    this.getLog.afterClosed().subscribe((result: Log) => {
+    this.editLogDialog = this.dialog.open(EditLogDialog, dialogConfig);
+    this.editLogDialog.afterClosed().subscribe((result: Log) => {
       console.log("dialog closed");
 
       if(result !== undefined) {
