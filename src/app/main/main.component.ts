@@ -220,6 +220,8 @@ export class MainComponent implements OnInit{
   }
 
   openGetLog(tour: Tour){
+    console.log(Number(tour.start.split(',')[1]), Number(tour.start.split(',')[0]));
+    this.setMap(this.latLngToCoords(18, Number(tour.start.split(',')[1]), Number(tour.start.split(',')[0])), 18)
     this.isDisabled = this.isDisabled ? false : true;
     this.getAllLogs(tour).then((logs: Observable<object>) => {
       logs.subscribe(result => {

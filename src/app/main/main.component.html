@@ -22,18 +22,6 @@
                 <br>
                 <br>
               </li>
-            <li *ngFor="let tour of tours" >
-              <button (click)="setMap(latLngToCoords(18, Number(tour.start.split(',')[0]), Number(tour.start.split(',')[1])), 18)" (mouseenter)="hoveredTour = tour" (mouseleave)="hoveredTour = null" mat-button>
-                <span class="badge">{{tour.name}}</span>
-                <br>
-                <span class="badge">{{tour.duration}}</span>
-                <br>
-                <span class="name">{{tour.timeCreated}}</span>
-              </button>
-              <button mat-button (click)="openEditTourDialog(tour)">Edit route</button>
-              <br>
-              <br>
-            </li>
           </ul>
         </div>
       </span>
