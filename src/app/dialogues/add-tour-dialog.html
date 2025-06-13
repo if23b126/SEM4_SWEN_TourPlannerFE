@@ -9,16 +9,28 @@
       <mat-label>Description</mat-label>
       <input required matInput [(ngModel)]="description" name="newTourDescription" placeholder="Description">
     </mat-form-field>
-    <table class="example-full-width"><tr>
-      <td><mat-form-field class="example-full-width">
-        <mat-label>Start</mat-label>
-        <input required matInput [(ngModel)]="startpoint" name="newTourStartpoint" placeholder="Start">
-      </mat-form-field></td>
-      <td><mat-form-field class="example-full-width">
-        <mat-label>End</mat-label>
-        <input required matInput [(ngModel)]="endpoint" name="newTourEndpoint" placeholder="End">
-      </mat-form-field></td>
-    </tr></table>
+    <table class="example-full-width">
+      <tr>
+        <td>
+          <mat-form-field class="example-full-width">
+            <mat-label>Start</mat-label>
+            <input required matInput [(ngModel)]="startpoint" name="newTourStartpoint" placeholder="Start">
+            <button mat-icon-button type="button" matSuffix (click)="openMapDialog('start')">
+              <mat-icon aria-label="pick startlocation" fontIcon="location_pin"></mat-icon>
+            </button>
+          </mat-form-field>
+        </td>
+        <td>
+          <mat-form-field class="example-full-width">
+            <mat-label>End</mat-label>
+            <input required matInput [(ngModel)]="endpoint" name="newTourEndpoint" placeholder="End">
+            <button mat-icon-button type="button" matSuffix (click)="openMapDialog('end')">
+              <mat-icon aria-label="pick endlocation" fontIcon="location_pin"></mat-icon>
+            </button>
+          </mat-form-field>
+        </td>
+      </tr>
+    </table>
     <mat-form-field class="example-full-width">
       <mat-label>transportMode</mat-label>
       <mat-select [(ngModel)]="transportMode" name="newTourTransportMode">
@@ -29,40 +41,12 @@
     </mat-form-field>
     <mat-form-field class="example-full-width">
       <mat-label>distance</mat-label>
-      <input matInput [(ngModel)]="distance" name="newTourDistance" type="number" placeholder="distance">
+      <input disabled matInput [(ngModel)]="distance" name="newTourDistance" type="number" placeholder="distance">
     </mat-form-field>
-    <table class="example-full-width">
-      <tr>
-        <td>
-          <mat-form-field class="example-full-width">
-            <mat-label>Starttime</mat-label>
-            <input matInput [ngxMatDatetimePicker]="timeStartPicker" placeholder="Choose a date"
-                   [disabled]="disabled" [(ngModel)]="timeStart" name="newTourTimeStart">
-            <ngx-mat-datepicker-toggle matSuffix [for]="timeStartPicker"></ngx-mat-datepicker-toggle>
-            <ngx-mat-datetime-picker #timeStartPicker>
-              <ngx-mat-datepicker-actions>
-                <button mat-button ngxMatDatepickerCancel>Cancel</button>
-                <button mat-raised-button color="primary" ngxMatDatepickerApply>Apply</button>
-              </ngx-mat-datepicker-actions>
-            </ngx-mat-datetime-picker>
-          </mat-form-field>
-        </td>
-        <td>
-          <mat-form-field class="example-full-width">
-            <mat-label>Endtime</mat-label>
-            <input matInput [ngxMatDatetimePicker]="timeEndPicker" placeholder="Choose a date"
-                   [disabled]="disabled" [(ngModel)]="timeEnd" name="newTourTimeEnd">
-            <ngx-mat-datepicker-toggle matSuffix [for]="timeEndPicker"></ngx-mat-datepicker-toggle>
-            <ngx-mat-datetime-picker #timeEndPicker>
-              <ngx-mat-datepicker-actions>
-                <button mat-button ngxMatDatepickerCancel>Cancel</button>
-                <button mat-raised-button color="primary" ngxMatDatepickerApply>Apply</button>
-              </ngx-mat-datepicker-actions>
-            </ngx-mat-datetime-picker>
-          </mat-form-field>
-        </td>
-      </tr>
-    </table>
+    <mat-form-field>
+      <mat-label>duration</mat-label>
+      <input disabled matInput [(ngModel)]="duration" name="newTourDuration" type="number" placeholder="duration">
+    </mat-form-field>
     <mat-form-field class="example-full-width">
       <mat-label>information</mat-label>
       <input required matInput [(ngModel)]="information" name="newTourInformation" placeholder="information">

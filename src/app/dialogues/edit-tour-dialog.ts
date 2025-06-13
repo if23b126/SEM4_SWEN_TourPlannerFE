@@ -1,25 +1,21 @@
-import {Component, Inject} from '@angular/core';
+import {Component, inject, Inject} from '@angular/core';
 import {
-  MAT_DIALOG_DATA,
+  MAT_DIALOG_DATA, MatDialog,
   MatDialogActions,
-  MatDialogClose,
+  MatDialogClose, MatDialogConfig,
   MatDialogContent, MatDialogRef,
   MatDialogTitle
 } from '@angular/material/dialog';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {FormsModule} from '@angular/forms';
 import {MatInput} from '@angular/material/input';
-import {MatButton} from '@angular/material/button';
+import {MatButton, MatIconButton} from '@angular/material/button';
 import {Tour} from '../tour';
 import {Profile} from '../profile';
-import {
-  NgxMatDatepickerActions,
-  NgxMatDatepickerApply,
-  NgxMatDatepickerCancel,
-  NgxMatDatepickerInput, NgxMatDatepickerToggle, NgxMatDatetimepicker
-} from '@ngxmc/datetime-picker';
 import {MatSelect} from '@angular/material/select';
 import {MatOption} from '@angular/material/core';
+import {MatIcon} from '@angular/material/icon';
+import {MapDialog} from './map-dialog';
 
 @Component({
   selector: 'edit-tour-dialog',
@@ -33,14 +29,10 @@ import {MatOption} from '@angular/material/core';
     MatButton,
     MatDialogTitle,
     MatDialogClose,
-    NgxMatDatepickerActions,
-    NgxMatDatepickerApply,
-    NgxMatDatepickerCancel,
-    NgxMatDatepickerInput,
-    NgxMatDatepickerToggle,
-    NgxMatDatetimepicker,
     MatOption,
-    MatSelect
+    MatSelect,
+    MatIcon,
+    MatIconButton
   ]
 })
 
@@ -52,8 +44,7 @@ export class EditTourDialog {
   endpoint: string = "";
   transportMode: string = "";
   distance: number = 0;
-  timeStart: Date = new Date;
-  timeEnd: Date = new Date;
+  duration: number = 0;
   information: string = "";
   timeCreated: string = "";
 
@@ -70,8 +61,10 @@ export class EditTourDialog {
   ];
 
   disabled: boolean = false;
+  readonly dialog = inject(MatDialog);
 
   constructor(
+    private mapDialog: MatDialogRef<MapDialog>,
     @Inject(MAT_DIALOG_DATA) private data: Tour,
     private dialogRef: MatDialogRef<EditTourDialog>) {
     if (this.data) {
@@ -81,8 +74,7 @@ export class EditTourDialog {
       this.endpoint = this.data.end;
       this.transportMode = this.data.transportMode;
       this.distance = this.data.distance;
-      this.timeStart = new Date(this.data.timeStart.substring(0, 19));
-      this.timeEnd = new Date(this.data.timeEnd.substring(0, 19));
+      this.duration = this.data.duration;
       this.information = this.data.information;
       this.timeCreated = this.data.timeCreated;
     } else {
@@ -104,8 +96,7 @@ export class EditTourDialog {
       end: this.endpoint,
       transportMode: this.transportMode,
       distance: this.distance,
-      timeStart: this.parseDate(this.timeStart),
-      timeEnd: this.parseDate(this.timeEnd),
+      duration: this.duration,
       information: this.information,
       timeCreated: this.timeCreated
     };
@@ -118,5 +109,27 @@ export class EditTourDialog {
       time.getHours().toString().padStart(2, "0") + ":" +
       time.getMinutes().toString().padStart(2, "0") + ":" +
       time.getSeconds().toString().padStart(2, "0")
+  }
+
+  openMapDialog(mode: string){
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.autoFocus = true;
+    dialogConfig.height = "100vh";
+    dialogConfig.width = "100vh";
+    this.mapDialog = this.dialog.open(MapDialog, dialogConfig);
+
+    this.mapDialog.afterClosed().subscribe((result: number[]) => {
+
+      if(result !== undefined) {
+        switch (mode) {
+          case "start":
+            this.startpoint = result[0] + "," + result[1];
+            break;
+          case "end":
+            this.endpoint = result[0] + "," + result[1];
+            break;
+        }
+      }
+    })
   }
 }
