@@ -1,6 +1,6 @@
 <mat-grid-list cols="2" rowHeight="2:1">
   <mat-grid-tile rowspan="2">
-    <div class="center-text center-content tour background-color">
+    <div class="center-text center-content tour background-color rounded-corners">
       <div class="center-text">
           <button mat-button (click)="openAddTourDialog()">Add Tour</button>
       </div>
@@ -11,7 +11,7 @@
               <button (mouseenter)="hoveredTour = tour" (mouseleave)="hoveredTour = null" mat-button>
                 <span class="badge">{{tour.name}}</span>
                 <br>
-                <span class="badge">{{tour.start}} - {{tour.end}}</span>
+                <span class="badge">{{tour.duration}}</span>
                 <br>
                 <span class="name">{{tour.timeCreated}}</span>
               </button>
@@ -39,8 +39,7 @@
           <div><mat-label>End: {{hoveredTour.end}}</mat-label></div>
           <div><mat-label>Transport Mode: {{hoveredTour.transportMode}}</mat-label></div>
           <div><mat-label>Distance: {{hoveredTour.distance}}</mat-label></div>
-          <div><mat-label>Time Started: {{hoveredTour.timeStart}}</mat-label></div>
-          <div><mat-label>Time End: {{hoveredTour.timeEnd}}</mat-label></div>
+          <div><mat-label>Duration: {{hoveredTour.duration}}</mat-label></div>
           <div><mat-label>Time Created: {{hoveredTour.timeCreated}}</mat-label></div>
           <div><mat-label>Information: {{hoveredTour.information}}</mat-label></div>
         </div>

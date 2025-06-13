@@ -4,7 +4,11 @@
 }
 
 .background-color {
-  background-color: aliceblue;
+  background-color: #161215;
+}
+
+.rounded-corners {
+  border-radius: 30px;
 }
 
 .example-button-row {

@@ -5,8 +5,7 @@ export interface Tour {
   end: string;
   transportMode: string;
   distance: number;
-  timeStart: string;
-  timeEnd: string;
+  duration: number;
   information: string;
   timeCreated: string;
 }

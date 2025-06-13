@@ -58,8 +58,7 @@ export class MainComponent implements OnInit{
     end: "",
     transportMode: "",
     distance: 0,
-    timeStart: "",
-    timeEnd: "",
+    duration: 0,
     information: "",
     timeCreated: ""
   }];
@@ -84,7 +83,7 @@ export class MainComponent implements OnInit{
       })
     })
 
-    this.tile = this.latLngToCoords(18, 48.23486104355502,16.371135620688413)
+    this.tile = this.latLngToCoords(18,27.09258226095784, 17.80118434475323)
 
     this.getTile(this.tile, 18).then((img: Observable<Blob>) => {
       img.subscribe(result => {
