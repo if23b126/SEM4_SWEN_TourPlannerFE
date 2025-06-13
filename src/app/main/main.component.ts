@@ -83,14 +83,14 @@ export class MainComponent implements OnInit{
       })
     })
 
-    this.tile = this.latLngToCoords(18,27.09258226095784, 17.80118434475323)
+    /*this.tile = this.latLngToCoords(18,27.09258226095784, 17.80118434475323)
 
     this.getTile(this.tile, 18).then((img: Observable<Blob>) => {
       img.subscribe(result => {
         let objectURL = URL.createObjectURL(result);
         this.img = this.sanitizer.bypassSecurityTrustUrl(objectURL);
       })
-    })
+    })*/
 
   }
 
@@ -109,6 +109,15 @@ export class MainComponent implements OnInit{
   async getTile(tile: {x: number, y: number}, zoom: number): Promise<Observable<Blob>>{
     let osmURL = this.restService + "osm/" + zoom.toString() + "/" + tile.x.toString() + "/" + tile.y.toString();
     return this.client.get(osmURL, {responseType: 'blob'});
+  }
+
+  setMap(tile: {x: number, y: number}, zoom: number): void {
+    this.getTile(this.tile, 18).then((img: Observable<Blob>) => {
+      img.subscribe(result => {
+        let objectURL = URL.createObjectURL(result);
+        this.img = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+      })
+    })
   }
 
   openAddTourDialog(): void {
@@ -146,4 +155,6 @@ export class MainComponent implements OnInit{
     const tourURL = this.restService + "tour";
     return this.client.put(tourURL, body);
   }
+
+  protected readonly Number = Number;
 }
