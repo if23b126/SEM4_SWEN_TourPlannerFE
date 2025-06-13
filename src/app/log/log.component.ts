@@ -8,6 +8,8 @@ import {MatGridList, MatGridTile} from '@angular/material/grid-list';
 import {MatButton} from '@angular/material/button';
 import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material/dialog';
 import {Component, Input, Output, EventEmitter, Inject} from '@angular/core';
+import {MatSelect} from '@angular/material/select';
+import {MatOption} from '@angular/material/core';
 import {
   NgxMatDatepickerActions,
   NgxMatDatepickerApply,
@@ -32,7 +34,7 @@ import {Log} from '../log';
     NgxMatDatepickerCancel,
     NgxMatDatepickerInput,
     NgxMatDatepickerToggle,
-    NgxMatDatetimepicker,
+    NgxMatDatetimepicker
   ],
   templateUrl: './log.component.html',
   styleUrl: './log.component.css'
@@ -69,6 +71,20 @@ export class LogComponent {
 
   onNoClick(): void {
     this.dialogRef.close();
+  }
+
+  addLog(): Log{
+    return {
+      id: this.id,
+      rating: this.rating,
+      difficulty: this.difficulty,
+      distance: this.distance,
+      time: this.parseDate(this.time),
+      timeStart: this.parseDate(this.timeStart),
+      timeEnd: this.parseDate(this.timeEnd),
+      comment: this.comment,
+      tourid: this.tourid,
+    };
   }
 
   editLog(): Log {

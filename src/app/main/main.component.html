@@ -30,9 +30,8 @@
       <div>
         <ng-template #prompt>
           <div>
-            <button *ngIf="isDisabled" id="changeText" (click)="enableDisable()" mat-button>
-              back
-            </button>
+            <button *ngIf="isDisabled" id="changeText" (click)="enableDisable()" mat-button>back</button>
+            <button *ngIf="isDisabled"  (click)="openAddLogButton()" mat-button>Add Log</button>
           </div>
           <div class="scrollable center mat-card">
             <ul style="list-style: none;">

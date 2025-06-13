@@ -149,6 +149,16 @@ export class MainComponent implements OnInit{
     this.getAllTours();
   }
 
+  openAddLogButton(): void{
+    this.getLog = this.dialog.open(LogComponent);
+
+    this.getLog.afterClosed().subscribe((result: Log) => {
+      if(result !== undefined) {
+        this.addLog(result).then(r => r.subscribe(a => {console.log("tour added")}));
+      }
+    })
+  }
+
   openEditTourDialog(tour: Tour){
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = tour;
@@ -213,6 +223,11 @@ export class MainComponent implements OnInit{
 
   async addTour(body: Tour) {
     const tourURL = this.restService + "tour";
+    return this.client.post(tourURL, body);
+  }
+
+  async addLog(body: Log) {
+    const tourURL = this.restService + "logs";
     return this.client.post(tourURL, body);
   }
 
