@@ -38,8 +38,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatOption,
     ReactiveFormsModule,
     MatIconButton,
-    MatIconModule,
-    NgxMatTimepickerComponent
+    MatIconModule
   ]
 })
 

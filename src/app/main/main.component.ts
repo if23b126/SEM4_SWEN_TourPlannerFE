@@ -109,14 +109,14 @@ export class MainComponent implements OnInit{
       })
     })
 
-    this.tile = this.latLngToCoords(18,27.09258226095784, 17.80118434475323)
+    /*this.tile = this.latLngToCoords(18,27.09258226095784, 17.80118434475323)
 
     this.getTile(this.tile, 18).then((img: Observable<Blob>) => {
       img.subscribe(result => {
         let objectURL = URL.createObjectURL(result);
         this.img = this.sanitizer.bypassSecurityTrustUrl(objectURL);
       })
-    })
+    })*/
 
   }
 
@@ -135,6 +135,15 @@ export class MainComponent implements OnInit{
   async getTile(tile: {x: number, y: number}, zoom: number): Promise<Observable<Blob>>{
     let osmURL = this.restService + "osm/" + zoom.toString() + "/" + tile.x.toString() + "/" + tile.y.toString();
     return this.client.get(osmURL, {responseType: 'blob'});
+  }
+
+  setMap(tile: {x: number, y: number}, zoom: number): void {
+    this.getTile(this.tile, 18).then((img: Observable<Blob>) => {
+      img.subscribe(result => {
+        let objectURL = URL.createObjectURL(result);
+        this.img = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+      })
+    })
   }
 
   openAddTourDialog(): void {
@@ -163,6 +172,7 @@ export class MainComponent implements OnInit{
     dialogConfig.data = tour;
     dialogConfig.autoFocus = true;
     this.editTourDialog = this.dialog.open(EditTourDialog, dialogConfig);
+
     this.editTourDialog.afterClosed().subscribe((result: Tour) => {
       console.log("dialog closed");
 
@@ -216,7 +226,6 @@ export class MainComponent implements OnInit{
         this.logs = parseJson(JSON.stringify(result));
       })
     })
-
   }
 
 
@@ -234,6 +243,8 @@ export class MainComponent implements OnInit{
     const tourURL = this.restService + "tour/"+ body.id;
     return this.client.put(tourURL, body);
   }
+
+  protected readonly Number = Number;
 
   async updateLog(body: Log) {
     const tourURL = this.restService + "logs/"+ body.id;
