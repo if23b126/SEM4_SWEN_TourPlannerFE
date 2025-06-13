@@ -36,8 +36,7 @@ import {Log} from '../log';
     NgxMatDatepickerToggle,
     NgxMatDatetimepicker
   ],
-  templateUrl: '../dialogues/edit-log-dialog.html',
-  styleUrl: './log.component.css'
+  templateUrl: '../dialogues/edit-log-dialog.html'
 })
 export class EditLogDialog {
   id: number = 0;

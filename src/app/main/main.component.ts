@@ -81,7 +81,6 @@ export class MainComponent implements OnInit{
     information: "",
     timeCreated: ""
   }];
-  tile: {x: number, y: number} = {x: 0, y: 0};
   hoveredTour: any = null;
   hoveredLog: any = null;
   img: any;
@@ -111,15 +110,6 @@ export class MainComponent implements OnInit{
       })
     })
 
-    /*this.tile = this.latLngToCoords(18,27.09258226095784, 17.80118434475323)
-
-    this.getTile(this.tile, 18).then((img: Observable<Blob>) => {
-      img.subscribe(result => {
-        let objectURL = URL.createObjectURL(result);
-        this.img = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-      })
-    })*/
-
   }
 
 
@@ -140,7 +130,7 @@ export class MainComponent implements OnInit{
   }
 
   setMap(tile: {x: number, y: number}, zoom: number): void {
-    this.getTile(this.tile, 18).then((img: Observable<Blob>) => {
+    this.getTile(tile, 18).then((img: Observable<Blob>) => {
       img.subscribe(result => {
         let objectURL = URL.createObjectURL(result);
         this.img = this.sanitizer.bypassSecurityTrustUrl(objectURL);
@@ -222,8 +212,10 @@ export class MainComponent implements OnInit{
   }
 
   openGetLog(tour: Tour){
-    console.log(Number(tour.start.split(',')[1]), Number(tour.start.split(',')[0]));
-    this.setMap(this.latLngToCoords(18, Number(tour.start.split(',')[1]), Number(tour.start.split(',')[0])), 18)
+    console.log(Number(tour.start.split(',')[0]), Number(tour.start.split(',')[1]));
+    let tile = this.latLngToCoords(18, Number(tour.start.split(',')[0]), Number(tour.start.split(',')[1]));
+    console.log(tile);
+    this.setMap(tile, 18)
     this.isDisabled = this.isDisabled ? false : true;
     this.getAllLogs(tour).then((logs: Observable<object>) => {
       logs.subscribe(result => {
