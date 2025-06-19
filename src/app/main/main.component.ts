@@ -1,14 +1,15 @@
-import {Component, Inject, inject, OnInit} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {NgFor, NgForOf, NgIf, CommonModule} from '@angular/common';
 import {Tour} from '../tour'
 import {Log} from '../log'
-import {MatCard, MatCardContent, MatCardSmImage} from '@angular/material/card';
-import {MatInput, MatInputModule, MatLabel} from '@angular/material/input';
+import { Coordinate } from '../coordinate';
+import {MatCard, MatCardContent} from '@angular/material/card';
+import {MatInputModule, MatLabel} from '@angular/material/input';
 import {FormsModule} from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {HttpClient} from '@angular/common/http';
 import {DomSanitizer} from '@angular/platform-browser';
-import {count, Observable} from 'rxjs';
+import {Observable} from 'rxjs';
 import {parseJson} from '@angular/cli/src/utilities/json-file';
 import {MatButton} from '@angular/material/button';
 import {LayoutModule} from '@angular/cdk/layout';
@@ -23,6 +24,17 @@ import { AddTourDialog } from '../dialogues/add-tour-dialog';
 import {EditTourDialog} from '../dialogues/edit-tour-dialog';
 import {AddLogDialog } from '../dialogues/add-log-dialog';
 import {EditLogDialog} from '../dialogues/edit-log-dialog';
+import Map from 'ol/Map';
+import TileLayer from 'ol/layer/Tile';
+import {OSM} from 'ol/source';
+import View from 'ol/View';
+import {fromLonLat, transform, useGeographic} from 'ol/proj';
+import {LineString} from 'ol/geom';
+import ol from 'ol/dist/ol';
+import {Feature} from 'ol';
+import {Vector} from 'ol/layer';
+import VectorSource from 'ol/source/Vector';
+import {Stroke, Style} from 'ol/style';
 
 @Component({
   standalone: true,
@@ -37,7 +49,6 @@ import {EditLogDialog} from '../dialogues/edit-log-dialog';
     FormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatCardSmImage,
     LayoutModule,
     MatGridList,
     MatGridTile,
@@ -84,9 +95,37 @@ export class MainComponent implements OnInit{
   hoveredTour: any = null;
   hoveredLog: any = null;
   img: any;
-  readonly addRouteDialog = inject(MatDialog);
   restService: string = "http://localhost:8080/"
   readonly dialog = inject(MatDialog);
+  public map!: Map
+  loaded: boolean = false;
+  routeStyles = {
+    'track-red': new Style({
+      stroke: new Stroke({
+        color: '#ff0000',
+        width: 3,
+      }),
+    }),
+    'track-black': new Style({
+      stroke: new Stroke({
+        color: '#000000',
+        width: 3,
+      }),
+    }),
+  };
+  initialLocation = {
+    lat: 48.2010386430652,
+    lng: 16.37038797323949,
+    zoom: 4
+  }
+  view = new View({
+    center: transform(
+      [this.initialLocation.lng, this.initialLocation.lat],
+      'EPSG:4326',
+      'EPSG:3857'
+    ),
+    zoom: this.initialLocation.zoom
+  })
 
   constructor(
     private client: HttpClient,
@@ -100,7 +139,7 @@ export class MainComponent implements OnInit{
   isDisabled: boolean = false;
 
   enableDisable() {
-    this.isDisabled = this.isDisabled ? false : true;
+    this.isDisabled = !this.isDisabled;
   }
 
   ngOnInit() {
@@ -110,6 +149,18 @@ export class MainComponent implements OnInit{
       })
     })
 
+    this.map = new Map({
+      layers: [
+        new TileLayer({
+          source: new OSM(),
+        }),
+      ],
+      view: this.view
+    });
+    this.loaded = true;
+    setTimeout(() => {
+      this.map.setTarget(document.getElementById("map")!);
+    }, 1000);
   }
 
 
@@ -212,18 +263,56 @@ export class MainComponent implements OnInit{
   }
 
   openGetLog(tour: Tour){
-    console.log(Number(tour.start.split(',')[0]), Number(tour.start.split(',')[1]));
-    let tile = this.latLngToCoords(18, Number(tour.start.split(',')[0]), Number(tour.start.split(',')[1]));
-    console.log(tile);
-    this.setMap(tile, 18)
-    this.isDisabled = this.isDisabled ? false : true;
+    this.map.getLayers().forEach(layer => {
+      if (layer.get('name') && layer.get('name') == "route"){
+        this.map.removeLayer(layer);
+      }
+    });
+    let startEnd: Coordinate[] = [{
+        lat: tour.start.split(',')[1],
+        lon: tour.start.split(',')[0]
+      },
+      {
+        lat: tour.end.split(',')[1],
+        lon: tour.end.split(',')[0]
+      }]
+    this.getRoute(startEnd, tour.transportMode).then(r => r.subscribe((a) => {
+
+      let coords = (a as Coordinate[]).map( c => { return [Number(c.lon), Number(c.lat)]; });
+
+      let middlePoint = coords[Math.round(coords.length/2)];
+
+      let geometry = new LineString(coords).transform('EPSG:4326', 'EPSG:3857');
+
+      let styles = this.routeStyles;
+
+      let layer = new Vector({
+        source: new VectorSource({
+          features: [
+            new Feature({
+              geometry: geometry
+            })
+          ]
+        }),
+        style: function () {
+          return styles['track-black'];
+        },
+        zIndex: 100
+      });
+
+      layer.set("name", "route");
+      this.map.addLayer(layer);
+
+      this.view.setCenter(fromLonLat(middlePoint));
+      this.view.setZoom(13);
+    }));
+    this.isDisabled = !this.isDisabled;
     this.getAllLogs(tour).then((logs: Observable<object>) => {
       logs.subscribe(result => {
         this.logs = parseJson(JSON.stringify(result));
       })
     })
   }
-
 
   async addTour(body: Tour) {
     const tourURL = this.restService + "tour";
@@ -257,5 +346,8 @@ export class MainComponent implements OnInit{
     return this.client.delete(tourURL);
   }
 
-  protected readonly count = count;
+  async getRoute(startEnd: Coordinate[], transportMode: string) {
+    const tourURL = this.restService + "osm/" + transportMode;
+    return this.client.post(tourURL,startEnd);
+  }
 }
