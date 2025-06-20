@@ -35,6 +35,7 @@ import {Feature} from 'ol';
 import {Vector} from 'ol/layer';
 import VectorSource from 'ol/source/Vector';
 import {Stroke, Style} from 'ol/style';
+import {log} from 'ol/console';
 
 @Component({
   standalone: true,
@@ -171,6 +172,11 @@ export class MainComponent implements OnInit{
     return this.client.get(tourURL, {responseType: 'json'});
   }
 
+  async getAllLogs(tour: Tour) {
+    const logURL = this.restService + "logs/" + tour.id;
+    return this.client.get(logURL, {responseType: 'json'});
+  }
+
   latLngToCoords(zoom: number,lat: number,lon: number): {x: number, y: number} {
     const x_coord = (Math.floor((lon+180)/360*Math.pow(2,zoom)));
     const y_coord = (Math.floor((1-Math.log(Math.tan(lat*Math.PI/180) + 1/Math.cos(lat*Math.PI/180))/Math.PI)/2 *Math.pow(2,zoom)));
@@ -196,10 +202,9 @@ export class MainComponent implements OnInit{
 
     this.addTourDialog.afterClosed().subscribe((result: Tour) => {
       if(result !== undefined) {
-        this.addTour(result).then(r => r.subscribe(a => {console.log("tour added")}));
+        this.addTour(result).then(r => r.subscribe(a => {console.log("tour added"); this.refreshTours();}));
       }
     })
-    this.getAllTours();
   }
 
   openAddLogButton(tourId: number): void{
@@ -210,7 +215,7 @@ export class MainComponent implements OnInit{
 
     this.addLogDialog.afterClosed().subscribe((result: Log) => {
       if(result !== undefined) {
-        this.addLog(result).then(r => r.subscribe(a => {console.log("tour added")}));
+        this.addLog(result).then(r => r.subscribe(a => {console.log("tour added"); this.refreshLogs()}));
       }
     })
   }
@@ -226,10 +231,9 @@ export class MainComponent implements OnInit{
 
       if(result !== undefined) {
         result.id = tour.id
-        this.updateTour(result).then(r => r.subscribe(a => {console.log("tour edited")}));
+        this.updateTour(result).then(r => r.subscribe(a => {console.log("tour edited"); this.refreshTours()}));
       }
     })
-    return this.getAllTours();
   }
 
   openEditLogDialog(log: Log){
@@ -243,28 +247,21 @@ export class MainComponent implements OnInit{
       if(result !== undefined) {
         result.id = log.id;
         result.tourid = log.tourid;
-        this.updateLog(result).then(r => r.subscribe(a => {console.log("tour edited")}));
+        this.updateLog(result).then(r => r.subscribe(a => {console.log("tour edited"); this.refreshLogs()}));
       }
     })
-    return this.getAllTours();
   }
 
   deleteTourButton(tour: Tour){
     if(tour !== undefined) {
-      this.deleteTour(tour).then(r => r.subscribe(a => {console.log("tour deleted" );}));
+      this.deleteTour(tour).then(r => r.subscribe(a => {console.log("tour deleted" ); this.refreshTours()}));
     }
-    return this.getAllTours();
   }
 
   deleteLogButton(log: Log){
     if(log !== undefined) {
-      this.deleteLog(log).then(r => r.subscribe(a => {console.log("log deleted" );}));
+      this.deleteLog(log).then(r => r.subscribe(a => {console.log("log deleted" );this.refreshLogs()}));
     }
-  }
-
-  async getAllLogs(tour: Tour) {
-    const logURL = this.restService + "logs/" + tour.id;
-    return this.client.get(logURL, {responseType: 'json'});
   }
 
   openGetLog(tour: Tour){
@@ -393,5 +390,21 @@ export class MainComponent implements OnInit{
         })
       })
     }
+  }
+
+  refreshTours() {
+    this.getAllTours().then((tours: Observable<object>) => {
+      tours.subscribe(result => {
+        this.tours = parseJson(JSON.stringify(result));
+      });
+    });
+  }
+
+  refreshLogs() {
+    this.getAllLogs(this.selectedTour).then((logs: Observable<object>) => {
+      logs.subscribe(result => {
+        this.logs = parseJson(JSON.stringify(result));
+      });
+    });
   }
 }
