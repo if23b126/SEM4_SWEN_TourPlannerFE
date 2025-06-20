@@ -1,4 +1,3 @@
-<div id="map" class="map" (click)="getCoord($event)" style="height: 100%; width: 100%;"></div>
-<mat-label style="color: white">{{coords}}</mat-label>
+<div id="mapDialog" class="map" (click)="getCoord($event)" style="height: 100%; width: 100%;"></div>
 <button mat-button type="submit" [mat-dialog-close]="setLocation()">Save</button>
 <button mat-button (click)="onNoClick()">Cancel</button>
