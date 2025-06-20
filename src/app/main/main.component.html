@@ -11,7 +11,7 @@
           <ul style="list-style: none;">
 
               <li *ngFor="let tour of tours"  >
-                <button (mouseenter)="hoveredTour = tour" (mouseleave)="hoveredTour = null"  (click)="openGetLog(tour)" mat-button>
+                <button (mouseenter)="hoveredTour = tour" (mouseleave)="hoveredTour = null"  (click)="selectedTour = tour; openGetLog(tour)" mat-button>
                   <span class="badge">{{tour.name}}</span>
                   <br>
                   <span class="badge">{{tour.start}} - {{tour.end}}</span>
@@ -32,7 +32,7 @@
         <ng-template #prompt>
           <div>
             <button *ngIf="isDisabled" id="changeText" (click)="enableDisable()" mat-button>back</button>
-            <button *ngIf="isDisabled"  (click)="openAddLogButton()" mat-button>Add Log</button>
+            <button *ngIf="isDisabled"  (click)="openAddLogButton(selectedTour?.id)" mat-button>Add Log</button>
             <button mat-button (click)="getReport('tour')">Get Tour Report</button>
           </div>
           <div class="scrollable center mat-card">

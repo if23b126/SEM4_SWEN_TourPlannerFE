@@ -53,7 +53,7 @@ export class AddLogDialog {
   disabled: boolean = false;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) private data: Log,
+    /*@Inject(MAT_DIALOG_DATA) private data: Log,
     private dialogRef: MatDialogRef<AddLogDialog>) {
     if (this.data) {
       this.comment = this.data.comment;
@@ -64,6 +64,15 @@ export class AddLogDialog {
       this.timeStart = new Date(this.data.timeStart.substring(0, 19));
       this.timeEnd = new Date(this.data.timeEnd.substring(0, 19));
       this.time = new Date(this.data.time.substring(0, 19));
+    } else {
+      console.log("no data passed");
+    }
+  }*/
+    @Inject(MAT_DIALOG_DATA) public data: { tourId: number },  // ✅ RICHTIGER Typ
+    private dialogRef: MatDialogRef<AddLogDialog>
+  ) {
+    if (this.data) {
+      this.tourid = this.data.tourId;
     } else {
       console.log("no data passed");
     }

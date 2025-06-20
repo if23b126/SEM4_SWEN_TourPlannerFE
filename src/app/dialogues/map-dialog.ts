@@ -19,8 +19,7 @@ import VectorLayer from 'ol/layer/Vector';
   selector: 'app-dialog',
   imports: [
     MatButton,
-    MatDialogClose,
-    MatLabel
+    MatDialogClose
   ],
   templateUrl: './map-dialog.html'
 })

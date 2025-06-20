@@ -95,6 +95,7 @@ export class MainComponent implements OnInit{
   currentTourID: number = -1;
   hoveredTour: any = null;
   hoveredLog: any = null;
+  selectedTour: any;
   img: any;
   restService: string = "http://localhost:8080/"
   readonly dialog = inject(MatDialog);
@@ -201,8 +202,11 @@ export class MainComponent implements OnInit{
     this.getAllTours();
   }
 
-  openAddLogButton(): void{
-    this.addLogDialog = this.dialog.open(AddLogDialog);
+  openAddLogButton(tourId: number): void{
+    console.log('Opening dialog with tourId:', tourId); // <--- Debug
+    this.addLogDialog = this.dialog.open(AddLogDialog, {
+      data: { tourId: tourId }
+    });
 
     this.addLogDialog.afterClosed().subscribe((result: Log) => {
       if(result !== undefined) {
