@@ -9,7 +9,7 @@
 
 &#x2610; which attributes are editable
 
-&#x2610; map situation
+&#x2611; map situation
 
 &#x2610; summary report
 

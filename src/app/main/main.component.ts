@@ -97,7 +97,7 @@ export class MainComponent implements OnInit{
   img: any;
   restService: string = "http://localhost:8080/"
   readonly dialog = inject(MatDialog);
-  public map!: Map
+  public map!: Map;
   loaded: boolean = false;
   routeStyles = {
     'track-red': new Style({
