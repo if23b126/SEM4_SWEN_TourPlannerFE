@@ -11,9 +11,9 @@
 
 &#x2611; map situation
 
-&#x2610; summary report
+&#x2611; summary report
 
-&#x2610; tour report
+&#x2611; tour report
 
 &#x2610; unit tests
 

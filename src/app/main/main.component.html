@@ -3,7 +3,8 @@
     <div class="center-text center-content tour background-color">
       <span *ngIf="!isDisabled; else prompt">
       <div class="center-text">
-          <button mat-button (click)="openAddTourDialog()">Add Tour</button>
+        <button mat-button (click)="openAddTourDialog()">Add Tour</button>
+        <button mat-button (click)="getReport('summary')">Get Summary Report</button>
       </div>
 
       <div class="scrollable center mat-card">
@@ -32,6 +33,7 @@
           <div>
             <button *ngIf="isDisabled" id="changeText" (click)="enableDisable()" mat-button>back</button>
             <button *ngIf="isDisabled"  (click)="openAddLogButton()" mat-button>Add Log</button>
+            <button mat-button (click)="getReport('tour')">Get Tour Report</button>
           </div>
           <div class="scrollable center mat-card">
             <ul style="list-style: none;">

@@ -92,6 +92,7 @@ export class MainComponent implements OnInit{
     information: "",
     timeCreated: ""
   }];
+  currentTourID: number = -1;
   hoveredTour: any = null;
   hoveredLog: any = null;
   img: any;
@@ -263,6 +264,7 @@ export class MainComponent implements OnInit{
   }
 
   openGetLog(tour: Tour){
+    this.currentTourID = tour.id;
     this.map.getLayers().forEach(layer => {
       if (layer.get('name') && layer.get('name') == "route"){
         this.map.removeLayer(layer);
@@ -349,5 +351,43 @@ export class MainComponent implements OnInit{
   async getRoute(startEnd: Coordinate[], transportMode: string) {
     const tourURL = this.restService + "osm/" + transportMode;
     return this.client.post(tourURL,startEnd);
+  }
+
+  async getSummaryReport() {
+    const reportURL = this.restService + "report/summary";
+    return this.client.get(reportURL, { responseType: 'blob' });
+  }
+
+  async getTourReport(id: number) {
+    const reportURL = this.restService + "report/tour/" + id;
+    return this.client.get(reportURL, { responseType: 'blob' });
+  }
+
+  getReport(type: string) {
+    if (type == "summary") {
+      this.getSummaryReport().then(result => {
+        result.subscribe(data => {
+          let blob = new Blob([data], {type: "application/pdf"});
+
+          let downloadURL = window.URL.createObjectURL(data);
+          let link = document.createElement("a");
+          link.href = downloadURL;
+          link.download = "summary.pdf";
+          link.click();
+        })
+      })
+    } else if (type == "tour") {
+      this.getTourReport(this.currentTourID).then(result => {
+        result.subscribe(data => {
+          let blob = new Blob([data], {type: "application/pdf"});
+
+          let downloadURL = window.URL.createObjectURL(data);
+          let link = document.createElement("a");
+          link.href = downloadURL;
+          link.download = "tour_" + this.currentTourID + ".pdf";
+          link.click();
+        })
+      })
+    }
   }
 }
