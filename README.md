@@ -1,9 +1,9 @@
 # TourPlannerFE
 
 # ToDos
-&#x2610; import 
+&#x2611; import 
 
-&#x2610; export
+&#x2611; export
 
 &#x2610; refresh after edit/add
 

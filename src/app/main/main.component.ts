@@ -35,6 +35,7 @@ import {Feature} from 'ol';
 import {Vector} from 'ol/layer';
 import VectorSource from 'ol/source/Vector';
 import {Stroke, Style} from 'ol/style';
+import {TourImportExport} from '../tourImportExport';
 import {log} from 'ol/console';
 
 @Component({
@@ -94,7 +95,18 @@ export class MainComponent implements OnInit{
     timeCreated: ""
   }];
   currentTourID: number = -1;
-  hoveredTour: any = null;
+  hoveredTour: Tour = {
+    id: 0,
+    name: "",
+    description: "",
+    start: "",
+    end: "",
+    transportMode: "",
+    distance: 0,
+    duration: 0,
+    information: "",
+    timeCreated: ""
+  };
   hoveredLog: any = null;
   selectedTour: any;
   img: any;
@@ -351,7 +363,7 @@ export class MainComponent implements OnInit{
 
   async getRoute(startEnd: Coordinate[], transportMode: string) {
     const tourURL = this.restService + "osm/" + transportMode;
-    return this.client.post(tourURL,startEnd);
+    return this.client.post(tourURL, startEnd);
   }
 
   async getSummaryReport() {
@@ -364,12 +376,20 @@ export class MainComponent implements OnInit{
     return this.client.get(reportURL, { responseType: 'blob' });
   }
 
+  async importTourBE(body: TourImportExport) {
+    const importURL = this.restService + "import";
+    return this.client.post(importURL, body, { headers: { 'Content-Type': 'application/json' }});
+  }
+
+  async exportTourBE(id: number) {
+    const exportURL = this.restService + "export/" + id;
+    return this.client.get(exportURL, { responseType: 'blob' });
+  }
+
   getReport(type: string) {
     if (type == "summary") {
       this.getSummaryReport().then(result => {
         result.subscribe(data => {
-          let blob = new Blob([data], {type: "application/pdf"});
-
           let downloadURL = window.URL.createObjectURL(data);
           let link = document.createElement("a");
           link.href = downloadURL;
@@ -380,8 +400,6 @@ export class MainComponent implements OnInit{
     } else if (type == "tour") {
       this.getTourReport(this.currentTourID).then(result => {
         result.subscribe(data => {
-          let blob = new Blob([data], {type: "application/pdf"});
-
           let downloadURL = window.URL.createObjectURL(data);
           let link = document.createElement("a");
           link.href = downloadURL;
@@ -391,6 +409,38 @@ export class MainComponent implements OnInit{
       })
     }
   }
+
+  importTour(event: any) {
+    let file = event.target.files[0];
+
+    if (file.type == "application/json") {
+      let fileReader = new FileReader();
+      fileReader.onloadend = (e) => {
+        let body: TourImportExport = fileReader.result as unknown as TourImportExport;
+
+        this.importTourBE(body).then(result => {
+          result.subscribe(data => {
+            console.log("tour imported");
+          })
+        });
+      }
+
+      fileReader.readAsText(file);
+    }
+  }
+
+  exportTour() {
+    this.exportTourBE(this.currentTourID).then(result => {
+      result.subscribe(data => {
+        let downloadURL = window.URL.createObjectURL(data);
+        let link = document.createElement("a");
+        link.href = downloadURL;
+        link.download = "tour_" + this.currentTourID + ".json";
+        link.click();
+      })
+    })
+  }
+
 
   refreshTours() {
     this.getAllTours().then((tours: Observable<object>) => {
@@ -407,4 +457,6 @@ export class MainComponent implements OnInit{
       });
     });
   }
+
+  protected readonly Math = Math;
 }

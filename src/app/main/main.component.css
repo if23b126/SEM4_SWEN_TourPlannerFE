@@ -90,3 +90,7 @@ mat-grid-list {
 .dialog {
   z-index: 999 !important;
 }
+
+.file-input {
+  display: none;
+}
