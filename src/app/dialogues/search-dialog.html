@@ -1,0 +1,14 @@
+<h1>Gefundene Touren</h1>
+<div *ngIf="tourLogs.length > 0; else noResults">
+  <ul>
+    <li *ngFor="let tour of tourLogs">
+      <button mat-button (click)="close(tour.id)">{{ tour.name }}</button>
+    </li>
+  </ul>
+</div>
+
+<ng-template #noResults>
+  <p>Keine Touren gefunden.</p>
+</ng-template>
+
+<button mat-button (click)="close()">Schließen</button>

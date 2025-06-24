@@ -22,6 +22,7 @@ import {
 } from '@angular/material/dialog';
 import { AddTourDialog } from '../dialogues/add-tour-dialog';
 import {EditTourDialog} from '../dialogues/edit-tour-dialog';
+import {SearchTourLogDialog} from '../dialogues/search-dialog';
 import {AddLogDialog } from '../dialogues/add-log-dialog';
 import {EditLogDialog} from '../dialogues/edit-log-dialog';
 import Map from 'ol/Map';
@@ -110,6 +111,7 @@ export class MainComponent implements OnInit{
   hoveredLog: any = null;
   selectedTour: any;
   img: any;
+  searchText: any;
   restService: string = "http://localhost:8080/"
   readonly dialog = inject(MatDialog);
   public map!: Map;
@@ -148,7 +150,8 @@ export class MainComponent implements OnInit{
     private addTourDialog: MatDialogRef<AddTourDialog>,
     private addLogDialog: MatDialogRef<AddLogDialog>,
     private editLogDialog: MatDialogRef<EditLogDialog>,
-    private editTourDialog: MatDialogRef<EditTourDialog>) {
+    private searchTourLodDialog: MatDialogRef<SearchTourLogDialog>,
+  private editTourDialog: MatDialogRef<EditTourDialog>) {
   }
 
   isDisabled: boolean = false;
@@ -187,6 +190,16 @@ export class MainComponent implements OnInit{
   async getAllLogs(tour: Tour) {
     const logURL = this.restService + "logs/" + tour.id;
     return this.client.get(logURL, {responseType: 'json'});
+  }
+
+  /*async getOneTour(id: number) {
+    const tourURL = this.restService + "tour/findTour/" + id;
+    return this.client.get(tourURL, {responseType: 'json'});
+  }*/
+
+  getOneTour(id: number): Observable<Tour> {
+    const tourURL = this.restService + "tour/findTour/" + id;
+    return this.client.get<Tour>(tourURL, { responseType: 'json' });
   }
 
   latLngToCoords(zoom: number,lat: number,lon: number): {x: number, y: number} {
@@ -248,6 +261,32 @@ export class MainComponent implements OnInit{
     })
   }
 
+
+  openSearchTourLogDialog() {
+    const observable = this.searchTourLogInput();
+    if (observable) {
+      observable.subscribe(result => {
+        const dialogRef = this.dialog.open(SearchTourLogDialog, {
+          data: { searchTourLogResult: result }
+        });
+
+        dialogRef.afterClosed().subscribe(tourId => {
+          if (tourId !== undefined) {
+            this.handleSelectedTour(tourId);
+          }
+        });
+      });
+    }
+  }
+
+  handleSelectedTour(tourId: number) {
+    this.getOneTour(tourId).subscribe(tour => {
+      console.log('Ausgewählte Tour:', tour);
+      this.openGetLog(tour);
+    });
+  }
+
+
   openEditLogDialog(log: Log){
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = log;
@@ -274,6 +313,14 @@ export class MainComponent implements OnInit{
     if(log !== undefined) {
       this.deleteLog(log).then(r => r.subscribe(a => {console.log("log deleted" );this.refreshLogs()}));
     }
+  }
+
+  searchTourLogInput(): Observable<any> | null{
+    if(this.searchText != null){
+      console.log(this.searchText);
+      return this.searchTourLog(this.searchText);
+    }
+    return null;
   }
 
   openGetLog(tour: Tour){
@@ -337,6 +384,12 @@ export class MainComponent implements OnInit{
   async addLog(body: Log) {
     const tourURL = this.restService + "logs";
     return this.client.post(tourURL, body);
+  }
+
+  searchTourLog(input: any): Observable<any> {
+    console.log(input + "2");
+    const tourURL = this.restService + "tour/search/" + input;
+    return this.client.get(tourURL);
   }
 
   async updateTour(body: Tour) {
@@ -459,4 +512,5 @@ export class MainComponent implements OnInit{
   }
 
   protected readonly Math = Math;
+  protected readonly console = console;
 }
