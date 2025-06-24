@@ -16,8 +16,6 @@
                 <button (mouseenter)="hoveredTour = tour" (click)="selectedTour = tour; openGetLog(tour)" mat-button>
                   <span class="badge">{{tour.name}}</span>
                   <br>
-                  <span class="badge">{{tour.start}} - {{tour.end}}</span>
-                  <br>
                   <span class="name">{{tour.timeCreated}}</span>
                 </button>
                 <button mat-button (click)="openEditTourDialog(tour)">Edit route</button>
@@ -74,8 +72,8 @@
           <div><mat-label>Start: {{hoveredTour.start}}</mat-label></div>
           <div><mat-label>End: {{hoveredTour.end}}</mat-label></div>
           <div><mat-label>Transport Mode: {{hoveredTour.transportMode}}</mat-label></div>
-          <div><mat-label>Distance: {{hoveredTour.distance}}</mat-label></div>
-          <div><mat-label>Duration: {{(hoveredTour.duration/60).toFixed(2)}} minutes</mat-label></div>
+          <div><mat-label>Distance: {{getDistance(hoveredTour.distance)}}</mat-label></div>
+          <div><mat-label>Duration: {{getDuration(hoveredTour.duration)}}</mat-label></div>
           <div><mat-label>Time Created: {{hoveredTour.timeCreated}}</mat-label></div>
           <div><mat-label>Information: {{hoveredTour.information}}</mat-label></div>
         </div>
