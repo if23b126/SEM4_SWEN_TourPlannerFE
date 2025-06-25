@@ -11,7 +11,7 @@ import {
   MatDialogTitle
 } from '@angular/material/dialog';
 import {MatFormFieldModule} from '@angular/material/form-field';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {FormControl, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatInput} from '@angular/material/input';
 import {MatButton, MatIconButton} from '@angular/material/button';
 import {Tour} from '../tour';
@@ -44,16 +44,15 @@ import { MatIconModule } from '@angular/material/icon';
 
 export class AddTourDialog {
   id: number = 0;
-  name: string = "";
-  description: string = "";
-  startpoint: string = "";
-  endpoint: string = "";
+  name: string | undefined;
+  description: string | undefined;
+  startpoint: string | undefined;
+  endpoint: string | undefined;
   transportMode: string = "foot-walking";
   distance: number = 0;
   duration: number = 0;
-  information: string = "";
+  information: string | undefined;
 
-  disabled: boolean = false;
   readonly dialog = inject(MatDialog);
 
   orsProfiles: Profile[] = [
@@ -79,28 +78,19 @@ export class AddTourDialog {
     this.dialogRef.close();
   }
 
-  addTour(): Tour {
+  addTour() {
     return {
       id: this.id,
-      name: this.name,
-      description: this.description,
-      start: this.startpoint,
-      end: this.endpoint,
-      transportMode: this.transportMode,
+      name: this.name as string,
+      description: this.description as string,
+      start: this.startpoint as string,
+      end: this.endpoint as string,
+      transportMode: this.transportMode as string,
       distance: this.distance,
       duration: this.duration,
-      information: this.information,
+      information: this.information as string,
       timeCreated: ""
     };
-  }
-
-  parseDate(time: Date): string {
-    return time.getFullYear().toString().padStart(2, "0") + "-" +
-      time.getMonth().toString().padStart(2, "0") + "-" +
-      time.getDay().toString().padStart(2, "0") + " " +
-      time.getHours().toString().padStart(2, "0") + ":" +
-      time.getMinutes().toString().padStart(2, "0") + ":" +
-      time.getSeconds().toString().padStart(2, "0")
   }
 
   openMapDialog(mode: string){

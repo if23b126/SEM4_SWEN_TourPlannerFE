@@ -60,7 +60,6 @@ export class EditTourDialog {
     { display: 'Wheelchair Accessible', value: 'wheelchair' }
   ];
 
-  disabled: boolean = false;
   readonly dialog = inject(MatDialog);
 
   constructor(
@@ -100,15 +99,6 @@ export class EditTourDialog {
       information: this.information,
       timeCreated: this.timeCreated
     };
-  }
-
-  parseDate(time: Date): string {
-    return time.getFullYear().toString().padStart(2, "0") + "-" +
-      time.getMonth().toString().padStart(2, "0") + "-" +
-      time.getDay().toString().padStart(2, "0") + " " +
-      time.getHours().toString().padStart(2, "0") + ":" +
-      time.getMinutes().toString().padStart(2, "0") + ":" +
-      time.getSeconds().toString().padStart(2, "0")
   }
 
   openMapDialog(mode: string){

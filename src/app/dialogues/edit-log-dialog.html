@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>Edit Log</h1>
 <mat-dialog-content>
-  <form class="add-route-form">
+  <form class="add-route-form" #userForm="ngForm">
     <mat-form-field class="example-full-width">
       <mat-label>Rating</mat-label>
       <input required matInput [(ngModel)]="rating" name="lograting" placeholder="{{this.rating}}">
@@ -55,7 +55,7 @@
     </mat-form-field>
 
     <mat-dialog-actions>
-      <button mat-button type="submit" [mat-dialog-close]="editLog()">Save</button>
+      <button mat-button type="submit" [disabled]="!userForm.form.valid" [mat-dialog-close]="editLog()">Save</button>
       <button mat-button (click)="onNoClick()" >Cancel</button>
     </mat-dialog-actions>
   </form>
