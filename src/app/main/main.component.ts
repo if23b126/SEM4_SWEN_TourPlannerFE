@@ -10,7 +10,6 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {HttpClient} from '@angular/common/http';
 import {DomSanitizer} from '@angular/platform-browser';
 import {forkJoin, Observable} from 'rxjs';
-import {parseJson} from '@angular/cli/src/utilities/json-file';
 import {MatButton} from '@angular/material/button';
 import {LayoutModule} from '@angular/cdk/layout';
 import {MatGridList, MatGridTile} from '@angular/material/grid-list';
@@ -167,7 +166,7 @@ export class MainComponent implements OnInit{
   ngOnInit() {
     this.getAllTours().then((tours: Observable<object>) => {
       tours.subscribe(result => {
-        this.tours = parseJson(JSON.stringify(result));
+        this.tours = result as Tour[];
       })
     })
 
@@ -383,7 +382,7 @@ export class MainComponent implements OnInit{
     this.isDisabled = !this.isDisabled;
     this.getAllLogs(tour).then((logs: Observable<object>) => {
       logs.subscribe(result => {
-        this.logs = parseJson(JSON.stringify(result));
+        this.logs = result as Log[];
       })
     })
   }
@@ -533,7 +532,7 @@ export class MainComponent implements OnInit{
   refreshTours() {
     this.getAllTours().then((tours: Observable<object>) => {
       tours.subscribe(result => {
-        this.tours = parseJson(JSON.stringify(result));
+        this.tours = result as Tour[]
       });
     });
   }
@@ -541,7 +540,7 @@ export class MainComponent implements OnInit{
   refreshLogs() {
     this.getAllLogs(this.selectedTour).then((logs: Observable<object>) => {
       logs.subscribe(result => {
-        this.logs = parseJson(JSON.stringify(result));
+        this.logs = result as Log[]
       });
     });
   }
