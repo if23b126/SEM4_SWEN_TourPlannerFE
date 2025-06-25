@@ -473,6 +473,7 @@ export class MainComponent implements OnInit{
 
         this.importTourBE(body).then(result => {
           result.subscribe(data => {
+            this.refreshTours();
             console.log("tour imported");
           })
         });
@@ -492,6 +493,22 @@ export class MainComponent implements OnInit{
         link.click();
       })
     })
+  }
+
+  getDuration(time: number): string {
+    if(time / 60 > 60) {
+      return (time/3600).toFixed(2) + " hours";
+    } else {
+      return (time/60).toFixed(2) + " minutes";
+    }
+  }
+
+  getDistance(distance: number): string {
+    if(distance / 1000 < 1) {
+      return distance.toFixed(2) + " m";
+    } else {
+      return (distance/1000).toFixed(2) + " km";
+    }
   }
 
 
