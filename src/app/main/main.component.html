@@ -8,8 +8,10 @@
         <input class="file-input" type="file" (change)="importTour($event)" #fileUpload>
         <button mat-button (click)="fileUpload.click()">Import Tour</button>
 
-        <input type="text" placeholder="Search" [(ngModel)]="searchText" (ngModelChange)="searchText"/>
-        <button (click)="openSearchTourLogDialog()">Suchen</button>
+        <mat-form-field>
+          <input matInput type="text" placeholder="Search" [(ngModel)]="searchText" (ngModelChange)="searchText"/>
+        </mat-form-field>
+        <button (click) ="openSearchTourLogDialog()" mat-button>Search</button>
       </div>
 
       <div class="scrollable center mat-card">

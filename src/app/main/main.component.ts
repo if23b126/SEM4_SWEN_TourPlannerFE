@@ -286,6 +286,7 @@ export class MainComponent implements OnInit{
 
   handleSelectedTour(tourId: number) {
     this.getOneTour(tourId).subscribe(tour => {
+      this.selectedTour = tour;
       this.openGetLog(tour);
     });
   }
