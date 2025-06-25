@@ -9,7 +9,7 @@ import {FormsModule} from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {HttpClient} from '@angular/common/http';
 import {DomSanitizer} from '@angular/platform-browser';
-import {Observable} from 'rxjs';
+import {forkJoin, Observable} from 'rxjs';
 import {parseJson} from '@angular/cli/src/utilities/json-file';
 import {MatButton} from '@angular/material/button';
 import {LayoutModule} from '@angular/cdk/layout';
@@ -22,6 +22,7 @@ import {
 } from '@angular/material/dialog';
 import { AddTourDialog } from '../dialogues/add-tour-dialog';
 import {EditTourDialog} from '../dialogues/edit-tour-dialog';
+import {SearchTourLogDialog} from '../dialogues/search-dialog';
 import {AddLogDialog } from '../dialogues/add-log-dialog';
 import {EditLogDialog} from '../dialogues/edit-log-dialog';
 import Map from 'ol/Map';
@@ -110,6 +111,7 @@ export class MainComponent implements OnInit{
   hoveredLog: any = null;
   selectedTour: any;
   img: any;
+  searchText: any;
   restService: string = "http://localhost:8080/"
   readonly dialog = inject(MatDialog);
   public map!: Map;
@@ -148,7 +150,8 @@ export class MainComponent implements OnInit{
     private addTourDialog: MatDialogRef<AddTourDialog>,
     private addLogDialog: MatDialogRef<AddLogDialog>,
     private editLogDialog: MatDialogRef<EditLogDialog>,
-    private editTourDialog: MatDialogRef<EditTourDialog>) {
+    private searchTourLodDialog: MatDialogRef<SearchTourLogDialog>,
+  private editTourDialog: MatDialogRef<EditTourDialog>) {
   }
 
   isDisabled: boolean = false;
@@ -187,6 +190,16 @@ export class MainComponent implements OnInit{
   async getAllLogs(tour: Tour) {
     const logURL = this.restService + "logs/" + tour.id;
     return this.client.get(logURL, {responseType: 'json'});
+  }
+
+  getOneTour(id: number): Observable<Tour> {
+    const tourURL = this.restService + "tour/findTour/" + id;
+    return this.client.get<Tour>(tourURL, { responseType: 'json' });
+  }
+
+  getOneLog(id: number): Observable<Log>{
+    const logURL = this.restService + "logs/findOneLog/" + id;
+    return this.client.get<Log>(logURL, {responseType: 'json'});
   }
 
   latLngToCoords(zoom: number,lat: number,lon: number): {x: number, y: number} {
@@ -248,6 +261,36 @@ export class MainComponent implements OnInit{
     })
   }
 
+
+  openSearchTourLogDialog() {
+    const observable = this.searchTourLogInput();
+    if (observable) {
+      observable.subscribe(result => {
+        const dialogRef = this.dialog.open(SearchTourLogDialog, {
+          data: { searchTourLogResult: result }
+        });
+
+        dialogRef.afterClosed().subscribe(tourId => {
+          if (tourId[1] == 1) {
+            this.handleSelectedTour(tourId[0]);
+          }else if(tourId[1] == 2){
+           this.getOneLog(tourId[0]).subscribe(log => {
+             this.handleSelectedTour(log.tourid);
+             this.hoveredLog = log;
+           })
+          }
+        });
+      });
+    }
+  }
+
+  handleSelectedTour(tourId: number) {
+    this.getOneTour(tourId).subscribe(tour => {
+      this.openGetLog(tour);
+    });
+  }
+
+
   openEditLogDialog(log: Log){
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = log;
@@ -274,6 +317,17 @@ export class MainComponent implements OnInit{
     if(log !== undefined) {
       this.deleteLog(log).then(r => r.subscribe(a => {console.log("log deleted" );this.refreshLogs()}));
     }
+  }
+
+  searchTourLogInput(): Observable<any> | null {
+    if (this.searchText != null) {
+      console.log(this.searchText);
+      return forkJoin({
+        tour: this.searchTour(this.searchText),
+        log: this.searchLog(this.searchText)
+      });
+    }
+    return null;
   }
 
   openGetLog(tour: Tour){
@@ -337,6 +391,18 @@ export class MainComponent implements OnInit{
   async addLog(body: Log) {
     const tourURL = this.restService + "logs";
     return this.client.post(tourURL, body);
+  }
+
+  searchTour(input: any): Observable<any> {
+    console.log(input + "2");
+    const tourURL = this.restService + "tour/search/" + input;
+    return this.client.get(tourURL);
+  }
+
+  searchLog(input: any): Observable<any> {
+    console.log(input + "2");
+    const tourURL = this.restService + "logs/search/" + input;
+    return this.client.get(tourURL);
   }
 
   async updateTour(body: Tour) {
@@ -476,4 +542,5 @@ export class MainComponent implements OnInit{
   }
 
   protected readonly Math = Math;
+  protected readonly console = console;
 }

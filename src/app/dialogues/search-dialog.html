@@ -1,0 +1,17 @@
+<h1>Tour and logs found</h1>
+<div *ngIf="tourLogs != undefined; else noResults">
+  <ul>
+    <li *ngFor="let tour of tourLogs?.tour">
+      <button mat-button (click)="close([tour.id, 1])">{{ tour.name }}</button>
+    </li>
+    <li *ngFor="let log of tourLogs?.log">
+      <button mat-button (click)="close([log.id, 2])">{{ log.comment }}</button>
+    </li>
+  </ul>
+</div>
+
+<ng-template #noResults>
+  <p>No tour or log found</p>
+</ng-template>
+
+<button mat-button (click)="close()">Schließen</button>
