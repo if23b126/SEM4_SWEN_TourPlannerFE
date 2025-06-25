@@ -40,14 +40,14 @@ import {Log} from '../log';
 
 })
 export class AddLogDialog {
-  id: number = 0;
-  comment: string = "";
-  difficulty: number = 0;
-  distance: number = 0;
-  rating: number = 0;
-  time:  Date = new Date;
-  timeEnd: Date = new Date;
-  timeStart: Date = new Date;
+  id: null = null;
+  comment: null = null;
+  difficulty: null = null
+  distance: null = null
+  rating: null = null
+  time:  Date = new Date();
+  timeEnd: Date = new Date();
+  timeStart: Date = new Date();
   tourid: number = 0;
 
   disabled: boolean = false;
@@ -84,15 +84,15 @@ export class AddLogDialog {
 
   addLog(): Log{
     return {
-      id: this.id,
-      rating: this.rating,
-      difficulty: this.difficulty,
-      distance: this.distance,
-      time: this.parseDate(this.time),
-      timeStart: this.parseDate(this.timeStart),
-      timeEnd: this.parseDate(this.timeEnd),
-      comment: this.comment,
-      tourid: this.tourid,
+      id: this.id as unknown as number,
+      rating: this.rating as unknown as number,
+      difficulty: this.difficulty as unknown as number,
+      distance: this.distance as unknown as number,
+      time: this.parseDate(this.time as unknown as Date),
+      timeStart: this.parseDate(this.timeStart as unknown as Date),
+      timeEnd: this.parseDate(this.timeEnd as unknown as Date),
+      comment: this.comment as unknown as string,
+      tourid: this.tourid
     };
   }
 
