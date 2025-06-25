@@ -9,7 +9,7 @@ import {FormsModule} from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {HttpClient} from '@angular/common/http';
 import {DomSanitizer} from '@angular/platform-browser';
-import {Observable} from 'rxjs';
+import {forkJoin, Observable} from 'rxjs';
 import {parseJson} from '@angular/cli/src/utilities/json-file';
 import {MatButton} from '@angular/material/button';
 import {LayoutModule} from '@angular/cdk/layout';
@@ -192,14 +192,14 @@ export class MainComponent implements OnInit{
     return this.client.get(logURL, {responseType: 'json'});
   }
 
-  /*async getOneTour(id: number) {
-    const tourURL = this.restService + "tour/findTour/" + id;
-    return this.client.get(tourURL, {responseType: 'json'});
-  }*/
-
   getOneTour(id: number): Observable<Tour> {
     const tourURL = this.restService + "tour/findTour/" + id;
     return this.client.get<Tour>(tourURL, { responseType: 'json' });
+  }
+
+  getOneLog(id: number): Observable<Log>{
+    const logURL = this.restService + "logs/findOneLog/" + id;
+    return this.client.get<Log>(logURL, {responseType: 'json'});
   }
 
   latLngToCoords(zoom: number,lat: number,lon: number): {x: number, y: number} {
@@ -271,8 +271,13 @@ export class MainComponent implements OnInit{
         });
 
         dialogRef.afterClosed().subscribe(tourId => {
-          if (tourId !== undefined) {
-            this.handleSelectedTour(tourId);
+          if (tourId[1] == 1) {
+            this.handleSelectedTour(tourId[0]);
+          }else if(tourId[1] == 2){
+           this.getOneLog(tourId[0]).subscribe(log => {
+             this.handleSelectedTour(log.tourid);
+             this.hoveredLog = log;
+           })
           }
         });
       });
@@ -281,7 +286,6 @@ export class MainComponent implements OnInit{
 
   handleSelectedTour(tourId: number) {
     this.getOneTour(tourId).subscribe(tour => {
-      console.log('Ausgewählte Tour:', tour);
       this.openGetLog(tour);
     });
   }
@@ -315,10 +319,13 @@ export class MainComponent implements OnInit{
     }
   }
 
-  searchTourLogInput(): Observable<any> | null{
-    if(this.searchText != null){
+  searchTourLogInput(): Observable<any> | null {
+    if (this.searchText != null) {
       console.log(this.searchText);
-      return this.searchTourLog(this.searchText);
+      return forkJoin({
+        tour: this.searchTour(this.searchText),
+        log: this.searchLog(this.searchText)
+      });
     }
     return null;
   }
@@ -386,9 +393,15 @@ export class MainComponent implements OnInit{
     return this.client.post(tourURL, body);
   }
 
-  searchTourLog(input: any): Observable<any> {
+  searchTour(input: any): Observable<any> {
     console.log(input + "2");
     const tourURL = this.restService + "tour/search/" + input;
+    return this.client.get(tourURL);
+  }
+
+  searchLog(input: any): Observable<any> {
+    console.log(input + "2");
+    const tourURL = this.restService + "logs/search/" + input;
     return this.client.get(tourURL);
   }
 

@@ -2,6 +2,8 @@ import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {CommonModule} from '@angular/common';
 import {MatButton} from '@angular/material/button';
+import {Tour} from '../tour';
+import {Log} from '../log';
 
 @Component({
   selector: 'app-search-tour-log-dialog',
@@ -11,7 +13,7 @@ import {MatButton} from '@angular/material/button';
 })
 export class SearchTourLogDialog {
 
-  tourLogs: any[] = [];
+  tourLogs: {log: Log[], tour: Tour[]} | undefined = undefined;
 
   constructor(
     public dialogRef: MatDialogRef<SearchTourLogDialog>,
@@ -23,7 +25,7 @@ export class SearchTourLogDialog {
     }
   }
 
-  close(tourId?: number) {
+  close(tourId?: number[]) {
     this.dialogRef.close(tourId);
   }
 }
