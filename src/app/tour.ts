@@ -9,4 +9,6 @@ export interface Tour {
   duration: number;
   information: string;
   timeCreated: string;
+  popularity: number;
+  childfriendliness: number;
 }

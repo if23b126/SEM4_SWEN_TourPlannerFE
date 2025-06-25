@@ -93,7 +93,9 @@ export class MainComponent implements OnInit{
     distance: 0,
     duration: 0,
     information: "",
-    timeCreated: ""
+    timeCreated: "",
+    popularity: 0,
+    childfriendliness: 0
   }];
   currentTourID: number = -1;
   hoveredTour: Tour = {
@@ -106,7 +108,9 @@ export class MainComponent implements OnInit{
     distance: 0,
     duration: 0,
     information: "",
-    timeCreated: ""
+    timeCreated: "",
+    popularity: 0,
+    childfriendliness: 0
   };
   hoveredLog: any = null;
   selectedTour: any;

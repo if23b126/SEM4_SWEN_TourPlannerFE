@@ -47,6 +47,8 @@ export class EditTourDialog {
   duration: number = 0;
   information: string = "";
   timeCreated: string = "";
+  popularity: number = 0;
+  childfriendliness = 0;
 
   orsProfiles: Profile[] = [
     { display: 'Driving (Car)', value: 'driving-car' },
@@ -76,6 +78,8 @@ export class EditTourDialog {
       this.duration = this.data.duration;
       this.information = this.data.information;
       this.timeCreated = this.data.timeCreated;
+      this.popularity = this.popularity;
+      this.childfriendliness = this.childfriendliness;
     } else {
       console.log("no data passed");
     }
@@ -97,7 +101,9 @@ export class EditTourDialog {
       distance: this.distance,
       duration: this.duration,
       information: this.information,
-      timeCreated: this.timeCreated
+      timeCreated: this.timeCreated,
+      popularity: this.popularity,
+      childfriendliness: this.childfriendliness
     };
   }
 
